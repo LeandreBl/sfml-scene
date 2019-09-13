@@ -3,6 +3,8 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <iostream>
+
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -14,33 +16,42 @@
 namespace sfs
 {
 class GameObject;
+class IComponent;
 
 class Scene
 {
       public:
 	Scene(const std::string &name, uint32_t fps) noexcept;
-	virtual ~Scene();
+	virtual ~Scene() = default;
 
 	void run() noexcept;
 	void close() noexcept;
 
-	void addGameObject(GameObject *object) noexcept;
-	void removeGameObject(GameObject *object) noexcept;
+	template <typename T, typename... Args>
+	T &addGameObject(const Args &... args) noexcept
+	{
+		std::unique_ptr<T> go =
+			std::make_unique<T>(std::forward<Args>(args)...);
+		auto &i = *go.get();
+
+		_toAdd.push_back(std::move(go));
+		return i;
+	}
 
 	std::vector<GameObject *> getGameObjects(const std::string &name) const
 		noexcept;
 	std::vector<GameObject *> getGameObjects(int tag) const noexcept;
-	template <typename T>
-	std::vector<T *> getGameObjects() const noexcept {
+	template <typename T> std::vector<T *> getGameObjects() const noexcept
+	{
 		std::vector<T *> v;
 
 		for (auto &&i : _objects) {
-			T *p = dynamic_cast<T *>(i);
+			T *p = dynamic_cast<T *>(i.get());
 			if (p != nullptr)
 				v.push_back(p);
 		}
 		for (auto &&i : _toAdd) {
-			T *p = dynamic_cast<T *>(i);
+			T *p = dynamic_cast<T *>(i.get());
 			if (p != nullptr)
 				v.push_back(p);
 		}
@@ -51,7 +62,7 @@ class Scene
 	float time() noexcept;
 	float realTime() noexcept;
 	void timeScale(float timescale) noexcept;
-	float timescale() const noexcept;
+	float timeScale() const noexcept;
 
 	void framerate(uint32_t framerate) noexcept;
 	uint32_t framerate() const noexcept;
@@ -62,21 +73,22 @@ class Scene
 	const sf::SoundBuffer *
 	getAssetSoundBuffer(const std::string &name) noexcept;
 
-	virtual sf::RenderWindow *getWindow() noexcept;
-	virtual void subscribe(const GameObject *object,
+	virtual void subscribe(const GameObject &object,
+			       const IComponent &component,
 			       const sf::Event::EventType &type) noexcept;
-	virtual void unsubscribe(const GameObject *object,
+	virtual void unsubscribe(const IComponent &component,
 				 const sf::Event::EventType &type) noexcept;
 
-      protected:
-	void insertToAddObjects() noexcept;
+	virtual sf::RenderWindow *getVideoHandle() noexcept;
+
+		protected : void insertToAddObjects() noexcept;
 	void deleteToRemoveObjects() noexcept;
 	std::string _name;
 	Clock _clock;
-	std::vector<GameObject *> _objects;
+	sf::Mutex _runMutex;
+	std::vector<std::unique_ptr<GameObject>> _objects;
 	std::vector<std::vector<GameObject *>> _layeredObjects;
-	std::deque<GameObject *> _toAdd;
-	std::deque<GameObject *> _toRemove;
+	std::deque<std::unique_ptr<GameObject>> _toAdd;
 	std::unordered_map<std::string, sf::Font> _fonts;
 	std::unordered_map<std::string, sf::Image> _images;
 	std::unordered_map<std::string, sf::Texture> _textures;

@@ -3,19 +3,18 @@
 
 namespace sfs
 {
-GameObject::GameObject(const std::string &name) noexcept
-    : sf::Sprite(), _name(name), _parent(nullptr), _tag(0), _childs(), _layer(0)
+GameObject::GameObject(const sf::Vector2f &position,
+		       const std::string &name) noexcept
+    : sf::Transformable(), _name(name), _parent(nullptr), _tag(0), _childs(),
+      _components(), _layer(GameObject::defaultLayer), _toDestroy(false)
 {
+	setPosition(position);
 }
 
 GameObject::~GameObject()
 {
-	if (_parent)
-		_parent->_childs.erase(std::remove(_parent->_childs.begin(),
-						   _parent->_childs.end(),
-						   this));
 	for (auto &&i : _childs)
-		i->_parent = nullptr;
+		i->destroy();
 }
 
 void GameObject::start(Scene &scene) noexcept
@@ -28,26 +27,14 @@ void GameObject::update(Scene &scene) noexcept
 	(void)scene;
 }
 
-void GameObject::display(Scene &scene) noexcept
-{
-	scene.getWindow()->draw(*this);
-}
-
-void GameObject::onEvent(Scene &scene, const sf::Event &event) noexcept
-{
-	(void)scene;
-	(void)event;
-}
-
-void GameObject::addChild(Scene &scene, GameObject *object) noexcept
-{
-	scene.addGameObject(object);
-	object->_parent = this;
-}
-
 std::vector<GameObject *> &GameObject::getChilds() noexcept
 {
 	return _childs;
+}
+
+std::vector<std::unique_ptr<IComponent>> &GameObject::getComponents() noexcept
+{
+	return _components;
 }
 
 GameObject *GameObject::parent() noexcept
@@ -89,4 +76,15 @@ void GameObject::layer(uint32_t layer) noexcept
 {
 	_layer = layer;
 }
+
+bool GameObject::toDestroy() const noexcept
+{
+	return _toDestroy;
+}
+
+void GameObject::destroy() noexcept
+{
+	_toDestroy = true;
+}
+
 } // namespace sfs

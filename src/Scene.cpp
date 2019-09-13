@@ -5,46 +5,59 @@ namespace sfs
 {
 Scene::Scene(const std::string &name, uint32_t fps) noexcept
     : _name(name), _clock(fps), _objects(), _layeredObjects(), _toAdd(),
-      _toRemove(), _fonts(), _images(), _textures(), _soundBuffers(),
-      _running(false)
+      _fonts(), _images(), _textures(), _soundBuffers(), _running(false)
 {
 	_objects.reserve(64);
 	_layeredObjects.reserve(10);
 }
 
-Scene::~Scene()
+static void eraseObject(std::vector<GameObject *> &v, GameObject *key)
 {
-	for (auto &&i : _objects)
-		delete i;
-}
+	auto rm = std::remove(v.begin(), v.end(), key);
+	auto go = *rm;
 
-template <typename T> static void eraseObject(std::vector<T> &v, T &key)
-{
-	v.erase(std::remove(v.begin(), v.end(), key));
+	if (go == nullptr)
+		return;
+	auto parent = go->parent();
+	if (parent != nullptr) {
+		for (auto it = parent->getChilds().begin();
+		     it != parent->getChilds().end(); ++it) {
+			if ((*it)->toDestroy() == true) {
+				(*it)->parent(nullptr);
+				it = parent->getChilds().erase(it);
+				--it;
+			}
+		}
+	}
+	v.erase(rm);
 }
 
 void Scene::insertToAddObjects() noexcept
 {
 	while (_toAdd.size() > 0) {
-		auto i = _toAdd.front();
-		_toAdd.pop_front();
-		_objects.push_back(i);
+		auto &i = _toAdd.front();
 		if (_layeredObjects.size() < i->layer() + 1)
 			_layeredObjects.resize(i->layer() + 1);
-		_layeredObjects[i->layer()].push_back(i);
+		_layeredObjects[i->layer()].push_back(i.get());
 		if (i->parent())
-			i->parent()->getChilds().push_back(i);
+			i->parent()->getChilds().push_back(i.get());
 		i->start(*this);
+		for (auto &&c: i->getComponents())
+			c->start(*this, *i);
+		_objects.push_back(std::move(i));
+		_toAdd.pop_front();
 	}
 }
 
 void Scene::deleteToRemoveObjects() noexcept
 {
-	while (_toRemove.size() > 0) {
-		auto &i = _toRemove.front();
-		_toRemove.pop_front();
-		eraseObject(_layeredObjects[i->layer()], i);
-		delete i;
+	for (auto it = _objects.begin(); it != _objects.end(); ++it) {
+		auto *go = it->get();
+		if (go->toDestroy()) {
+			eraseObject(_layeredObjects[it->get()->layer()], go);
+			it = _objects.erase(it);
+			--it;
+		}
 	}
 }
 
@@ -55,26 +68,21 @@ void Scene::run() noexcept
 	while (_running) {
 		insertToAddObjects();
 		deleteToRemoveObjects();
-		for (auto &&v : _layeredObjects)
-			for (auto &&object : v)
+		for (auto &&it = _layeredObjects.rbegin();
+		     it != _layeredObjects.rend(); ++it) {
+			for (auto &&object : *it) {
+				for (auto &&c : object->getComponents())
+					c->update(*this, *object);
 				object->update(*this);
-		_clock.refresh();
+			}
+			_clock.refresh();
+		}
 	}
 }
 
 void Scene::close() noexcept
 {
 	_running = false;
-}
-
-void Scene::addGameObject(GameObject *object) noexcept
-{
-	_toAdd.push_back(object);
-}
-
-void Scene::removeGameObject(GameObject *object) noexcept
-{
-	_toRemove.push_back(object);
 }
 
 std::vector<GameObject *> Scene::getGameObjects(const std::string &name) const
@@ -84,10 +92,10 @@ std::vector<GameObject *> Scene::getGameObjects(const std::string &name) const
 
 	for (auto &&i : _objects)
 		if (i->name() == name)
-			v.push_back(i);
+			v.push_back(i.get());
 	for (auto &&i : _toAdd)
 		if (i->name() == name)
-			v.push_back(i);
+			v.push_back(i.get());
 	return v;
 }
 
@@ -97,14 +105,12 @@ std::vector<GameObject *> Scene::getGameObjects(int tag) const noexcept
 
 	for (auto &&i : _objects)
 		if (i->tag() == tag)
-			v.push_back(i);
+			v.push_back(i.get());
 	for (auto &&i : _toAdd)
 		if (i->tag() == tag)
-			v.push_back(i);
+			v.push_back(i.get());
 	return v;
 }
-// std::vector<GameObject *> getGameObjects(int type) noexcept;
-
 float Scene::deltaTime() noexcept
 {
 	return _clock.deltaTime();
@@ -125,7 +131,7 @@ void Scene::timeScale(float timescale) noexcept
 	_clock.timeScale(timescale);
 }
 
-float Scene::timescale() const noexcept
+float Scene::timeScale() const noexcept
 {
 	return _clock.timeScale();
 }
@@ -146,6 +152,8 @@ const T *getAsset(const std::string &name,
 {
 	const auto &asset = map.find(name);
 
+	if (name.empty())
+		return map.empty() ? nullptr : &map.begin()->second;
 	if (asset == map.end()) {
 		T item;
 		if (item.loadFromFile(name) == false)
@@ -178,23 +186,25 @@ Scene::getAssetSoundBuffer(const std::string &name) noexcept
 	return getAsset<sf::SoundBuffer>(name, _soundBuffers);
 }
 
-sf::RenderWindow *Scene::getWindow() noexcept
+sf::RenderWindow *Scene::getVideoHandle() noexcept
 {
 	return nullptr;
 }
 
-void Scene::subscribe(const GameObject *object,
+void Scene::subscribe(const GameObject &object, const IComponent &component,
 		      const sf::Event::EventType &type) noexcept
 {
 	// no window -> no events
 	(void)object;
-	(void)type;}
+	(void)component;
+	(void)type;
+}
 
-void Scene::unsubscribe(const GameObject *object,
+void Scene::unsubscribe(const IComponent &component,
 			const sf::Event::EventType &type) noexcept
 {
 	// no window -> no events
-	(void)object;
+	(void)component;
 	(void)type;
 }
 
