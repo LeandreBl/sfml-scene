@@ -17,15 +17,17 @@ class Clock
 	uint32_t framerate() const noexcept;
 	void framerate(uint32_t framerate) noexcept;
 
-	float time() const noexcept;
-	float refresh() noexcept;
-	float deltaTime() const noexcept;
+	float getDeltaTime() const noexcept;
+	float getTime() const noexcept;
+	float getRealTime() const noexcept;
+	void refreshDeltaTime() noexcept;
 
 	private:
 	sf::Clock _clock;
 	float _timeScale;
 	float _time;
 	float _prevTime;
-	float _deltaTime;
+	float _framerate;
+	float _lastDeltaTime;
 };
 } // namespace sfs

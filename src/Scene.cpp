@@ -75,8 +75,8 @@ void Scene::run() noexcept
 					c->update(*this, *object);
 				object->update(*this);
 			}
-			_clock.refresh();
 		}
+		_clock.refreshDeltaTime();
 	}
 }
 
@@ -113,17 +113,17 @@ std::vector<GameObject *> Scene::getGameObjects(int tag) const noexcept
 }
 float Scene::deltaTime() noexcept
 {
-	return _clock.deltaTime();
+	return _clock.getDeltaTime();
 }
 
 float Scene::time() noexcept
 {
-	return _clock.time();
+	return _clock.getTime();
 }
 
 float Scene::realTime() noexcept
 {
-	return _clock.refresh();
+	return _clock.getRealTime();
 }
 
 void Scene::timeScale(float timescale) noexcept
@@ -191,20 +191,18 @@ sf::RenderWindow *Scene::getVideoHandle() noexcept
 	return nullptr;
 }
 
-void Scene::subscribe(const GameObject &object, const IComponent &component,
-		      const sf::Event::EventType &type) noexcept
+void Scene::subscribe(const GameObject &object, const sf::Event::EventType &type) noexcept
 {
 	// no window -> no events
 	(void)object;
-	(void)component;
 	(void)type;
 }
 
-void Scene::unsubscribe(const IComponent &component,
+void Scene::unsubscribe(const GameObject &object,
 			const sf::Event::EventType &type) noexcept
 {
 	// no window -> no events
-	(void)component;
+	(void)object;
 	(void)type;
 }
 

@@ -13,9 +13,5 @@ class Text : public IComponent, public sf::Text
 	     const sf::Color &color = sf::Color::White) noexcept;
 	void display(sf::RenderWindow &) noexcept;
 	void update(Scene &, GameObject &) noexcept;
-
-	void start(Scene &, GameObject &) noexcept {};
-	void onEvent(Scene &, const sf::Event &, GameObject &) noexcept {};
-      protected:
 };
 } // namespace sfs

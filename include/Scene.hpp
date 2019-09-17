@@ -30,8 +30,7 @@ class Scene
 	template <typename T, typename... Args>
 	T &addGameObject(const Args &... args) noexcept
 	{
-		std::unique_ptr<T> go =
-			std::make_unique<T>(std::forward<Args>(args)...);
+		std::unique_ptr<T> go = std::make_unique<T>(args...);
 		auto &i = *go.get();
 
 		_toAdd.push_back(std::move(go));
@@ -74,14 +73,14 @@ class Scene
 	getAssetSoundBuffer(const std::string &name) noexcept;
 
 	virtual void subscribe(const GameObject &object,
-			       const IComponent &component,
 			       const sf::Event::EventType &type) noexcept;
-	virtual void unsubscribe(const IComponent &component,
+	virtual void unsubscribe(const GameObject &object,
 				 const sf::Event::EventType &type) noexcept;
 
 	virtual sf::RenderWindow *getVideoHandle() noexcept;
 
-		protected : void insertToAddObjects() noexcept;
+      protected:
+	void insertToAddObjects() noexcept;
 	void deleteToRemoveObjects() noexcept;
 	std::string _name;
 	Clock _clock;

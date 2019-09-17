@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -16,9 +18,13 @@ class GameObject : public sf::Transformable
 	GameObject(const sf::Vector2f &position = sf::Vector2f(0.f, 0.f), const std::string &name = "") noexcept;
 	GameObject(const GameObject &object) noexcept = default;
 	GameObject &operator=(GameObject &object) noexcept = default;
+
+	void errorLog(const std::string &str) noexcept;
+
 	virtual ~GameObject();
-	virtual void start(Scene &scene) noexcept;
-	virtual void update(Scene &scene) noexcept;
+	virtual void start(Scene &) noexcept {};
+	virtual void update(Scene &) noexcept {};
+	virtual void onEvent(Scene &, const sf::Event &) {};
 
 	void destroy() noexcept;
 
@@ -82,4 +88,5 @@ class GameObject : public sf::Transformable
 	uint32_t _layer;
 	bool _toDestroy;
 };
+std::ostream &operator<<(std::ostream &os, const GameObject &object) noexcept;
 } // namespace sfs

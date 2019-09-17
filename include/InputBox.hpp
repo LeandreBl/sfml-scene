@@ -17,9 +17,21 @@ class InputBox : public UI
 		 const sf::Color &color = sf::Color::White) noexcept;
 	void start(Scene &scene) noexcept;
 	void update(Scene &scene) noexcept;
-	const std::string &string() noexcept;
+	void onEvent(Scene &scene, const sf::Event &event) noexcept;
+	std::string string() const noexcept;
 	void string(const std::string &string) noexcept;
+
       protected:
-	Text *text;
+	sf::Color _color;
+	uint32_t _charSize;
+	std::string _placeholder;
+	sf::String _content;
+	std::string _fontName;
+	const sf::Font *_font;
+	Text *_text;
+	float _prevTime;
+	bool _blink;
+	bool _selected;
+	bool _clicked;
 };
 } // namespace sfs

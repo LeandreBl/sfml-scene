@@ -3,9 +3,9 @@
 namespace sfs
 {
 Clock::Clock(uint32_t fps) noexcept
-    : _clock(), _timeScale(1.f), _time(0.f), _prevTime(0.f), _deltaTime(0.f)
+    : _clock(), _timeScale(1.f), _time(0.f), _prevTime(0.f), _framerate(fps),
+      _lastDeltaTime(1.f / fps)
 {
-	framerate(fps);
 }
 
 void Clock::reset() noexcept
@@ -27,31 +27,36 @@ float Clock::timeScale() const noexcept
 
 uint32_t Clock::framerate() const noexcept
 {
-	return 1.0 / _deltaTime;
+	return 1.0 / _lastDeltaTime;
 }
 
 void Clock::framerate(uint32_t framerate) noexcept
 {
-	_deltaTime = 1.0 / framerate;
+	_framerate = framerate;
 }
 
-float Clock::time() const noexcept
+float Clock::getTime() const noexcept
 {
 	return _time;
 }
 
-float Clock::refresh() noexcept
+float Clock::getRealTime() const noexcept
+{
+	return _clock.getElapsedTime().asSeconds();
+}
+
+float Clock::getDeltaTime() const noexcept
+{
+	return _lastDeltaTime * _timeScale;
+}
+
+void Clock::refreshDeltaTime() noexcept
 {
 	float rtime = _clock.getElapsedTime().asSeconds();
+	float diff = rtime - _prevTime;
 
-	_time += (rtime - _prevTime) * _timeScale;
-	_deltaTime = rtime - _prevTime;
+	_time += diff * _timeScale;
+	_lastDeltaTime = diff;
 	_prevTime = rtime;
-	return rtime;
 }
-
-float Clock::deltaTime() const noexcept
-{
-	return _deltaTime * _timeScale;
-}
-}
+} // namespace sfs

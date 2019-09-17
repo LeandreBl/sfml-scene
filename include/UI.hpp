@@ -6,7 +6,7 @@
 
 namespace sfs
 {
-class UI : public GameObject, public sf::Sprite
+class UI : public GameObject
 {
       public:
 	const uint32_t defaultLayer = 0;

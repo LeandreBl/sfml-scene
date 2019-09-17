@@ -3,6 +3,7 @@
 #include "include/Text.hpp"
 #include "include/WScene.hpp"
 #include "include/GameObject.hpp"
+#include "include/InputBox.hpp"
 
 class Pulse : public sfs::IComponent
 {
@@ -15,17 +16,6 @@ class Pulse : public sfs::IComponent
 
       protected:
 	sf::Vector2f _force;
-};
-
-struct CloseHandler : public sfs::IComponent {
-	void start(sfs::Scene &scene, sfs::GameObject &object) noexcept
-	{
-		scene.subscribe(object, *this, sf::Event::Closed);
-	}
-	void onEvent(sfs::Scene &scene, const sf::Event &event, sfs::GameObject &object) noexcept
-	{
-		scene.close();
-	}
 };
 
 struct CircleSprite : public sfs::IComponent {
@@ -55,31 +45,7 @@ class Circle : public sfs::GameObject
 	{
 		addComponent<Pulse>(
 			sf::Vector2f(std::rand() % 400, std::rand() % 400));
-		addComponent<CircleSprite>(sf::Color(std::rand()), 5.f);
-	}
-};
-
-struct Slower : public sfs::IComponent {
-	void start(sfs::Scene &scene, sfs::GameObject &object) noexcept
-	{
-		scene.subscribe(object, *this, sf::Event::KeyPressed);
-	}
-	void onEvent(sfs::Scene &scene, const sf::Event &event, sfs::GameObject &object) noexcept
-	{
-		float v;
-		if (event.key.code == sf::Keyboard::Up) {
-			v = 0.1;
-			scene.timeScale(scene.timeScale() + v);
-		} else if (event.key.code == sf::Keyboard::Down) {
-			v = -0.1;
-			scene.timeScale(scene.timeScale() + v);
-		} else if (event.key.code == sf::Keyboard::Space) {
-			for (size_t i = 0; i < 1000; ++i)
-				object.addChild<Circle>(scene);
-		} else if (event.key.code == sf::Keyboard::Return) {
-			for (auto &&i : object.getChilds())
-				i->destroy();
-		}
+		addComponent<CircleSprite>(sf::Color(std::rand()), 1 + std::rand() % 10);
 	}
 };
 
@@ -96,17 +62,44 @@ class Manager : public sfs::GameObject
 		} else {
 			scene.close();
 		}
-		addComponent<CloseHandler>();
-		addComponent<Slower>();
 
+		_input = &scene.addGameObject<sfs::InputBox>(
+			sf::Vector2f(10, 10), "", "Write here");
+
+		scene.subscribe(*this, sf::Event::Closed);
+		scene.subscribe(*this, sf::Event::KeyPressed);
 		setPosition(1500, 0);
 	};
 	void update(sfs::Scene &scene) noexcept
 	{
 		_text->setString(std::to_string(scene.timeScale()) + " "
-				 + std::to_string(scene.framerate()) + "\n" + std::to_string(_childs.size()));
+				 + std::to_string(scene.framerate()) + "\n"
+				 + std::to_string(_childs.size()));
+	}
+	void onEvent(sfs::Scene &scene, const sf::Event &event)
+	{
+		if (event.type == sf::Event::KeyPressed) {
+			float v;
+			if (event.key.code == sf::Keyboard::Up) {
+				v = 0.1;
+				scene.timeScale(scene.timeScale() + v);
+			} else if (event.key.code == sf::Keyboard::Down) {
+				v = -0.1;
+				scene.timeScale(scene.timeScale() + v);
+			} else if (event.key.code == sf::Keyboard::Space) {
+				size_t n = atoi(_input->string().c_str());
+				for (size_t i = 0; i < n; ++i)
+					addChild<Circle>(scene);
+			} else if (event.key.code == sf::Keyboard::Return) {
+				for (auto &&i : _childs)
+					i->destroy();
+			}
+		} else if (event.type == sf::Event::Closed) {
+			scene.close();
+		}
 	}
 	sfs::Text *_text;
+	sfs::InputBox *_input;
 };
 
 int main()

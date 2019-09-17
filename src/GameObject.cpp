@@ -17,16 +17,6 @@ GameObject::~GameObject()
 		i->destroy();
 }
 
-void GameObject::start(Scene &scene) noexcept
-{
-	(void)scene;
-}
-
-void GameObject::update(Scene &scene) noexcept
-{
-	(void)scene;
-}
-
 std::vector<GameObject *> &GameObject::getChilds() noexcept
 {
 	return _childs;
@@ -87,4 +77,17 @@ void GameObject::destroy() noexcept
 	_toDestroy = true;
 }
 
+void GameObject::errorLog(const std::string &str) noexcept
+{
+	std::cerr << "Error: " << *this << ": " << str << std::endl;
+}
+
+std::ostream &operator<<(std::ostream &os, const GameObject &object) noexcept
+{
+	const sf::Vector2f &position = object.getPosition();
+
+	os << "{ \"" << object.name() << "\" "
+	   << "(" << position.x << ", " << position.y << ") }" << std::endl;
+	return os;
+}
 } // namespace sfs

@@ -18,7 +18,7 @@ void WScene::callSubscribedEvents() noexcept
 
 	while (_window.pollEvent(event))
 		for (auto &&i : _subscribedEvents[event.type])
-			i.second->onEvent(*this, event, *i.first);
+			i->onEvent(*this, event);
 }
 
 void WScene::run() noexcept
@@ -40,8 +40,8 @@ void WScene::run() noexcept
 				object->update(*this);
 			}
 		}
+		_clock.refreshDeltaTime();
 		_window.display();
-		_clock.refresh();
 	}
 	_window.close();
 }
@@ -57,23 +57,21 @@ void WScene::framerate(uint32_t framerate) noexcept
 	_window.setFramerateLimit(framerate);
 }
 
-void WScene::subscribe(const GameObject &object, const IComponent &component,
+void WScene::subscribe(const GameObject &object,
 		       const sf::Event::EventType &type) noexcept
 {
 	for (auto &&i : _subscribedEvents[type])
-		if (i.second == &component)
+		if (i == &object)
 			return;
-	_subscribedEvents[type].emplace_back(
-		const_cast<GameObject *>(&object),
-		const_cast<IComponent *>(&component));
+	_subscribedEvents[type].push_back(const_cast<GameObject *>(&object));
 }
 
-void WScene::unsubscribe(const IComponent &component,
+void WScene::unsubscribe(const GameObject &object,
 			 const sf::Event::EventType &type) noexcept
 {
 	for (auto it = _subscribedEvents[type].begin();
 	     it != _subscribedEvents[type].end(); ++it) {
-		if (it->second == &component) {
+		if (*it == &object) {
 			_subscribedEvents[type].erase(it);
 			return;
 		}
