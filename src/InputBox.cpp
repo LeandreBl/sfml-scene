@@ -1,28 +1,20 @@
 #include "InputBox.hpp"
+#include "Colors.hpp"
 
 namespace sfs
 {
-InputBox::InputBox(const sf::Vector2f &position, const std::string &fontName,
-		   const std::string &placeholder, uint32_t characterSize,
-		   const sf::Color &color) noexcept
+InputBox::InputBox(const sf::Font &font, const sf::Vector2f &position,
+		   const std::string &placeholder, const sf::Color &color,
+		   uint32_t characterSize) noexcept
     : UI(position, "InputBox"), _color(color), _charSize(characterSize),
-      _placeholder(placeholder), _fontName(fontName), _font(nullptr),
-      _text(nullptr), _prevTime(0), _blink(true), _selected(false)
+      _placeholder(placeholder), _content(""), _font(font),
+      _text(addComponent<Text>(font, placeholder, color, characterSize)),
+      _prevTime(0), _blink(true), _selected(false), _clicked(false)
 {
 }
 
 void InputBox::start(Scene &scene) noexcept
 {
-	_font = scene.getAssetFont(_fontName);
-
-	if (_font == nullptr)
-		_font = scene.getAssetFont("");
-	if (_font == nullptr) {
-		errorLog("Could not load " + _fontName + " font");
-		destroy();
-		return;
-	}
-	_text = &addComponent<Text>(_placeholder, *_font, _charSize, _color);
 	_prevTime = scene.realTime();
 	scene.subscribe(*this, sf::Event::MouseButtonPressed);
 	scene.subscribe(*this, sf::Event::MouseButtonReleased);
@@ -33,20 +25,19 @@ void InputBox::update(Scene &scene) noexcept
 {
 	float t = scene.realTime();
 
-	_text->setPosition(getPosition());
+	_text.setPosition(getPosition());
 	if (t - _prevTime >= 1.f) {
 		_blink = !_blink;
 		_prevTime = t;
 	}
 	if (_content.isEmpty() && !_selected) {
-		_text->setString(_placeholder);
-		_text->setFillColor(
-			sf::Color(_color.r / 2, _color.g / 2, _color.b / 2));
+		_text.setString(_placeholder);
+		_text.setFillColor(_color / 2);
 	} else {
-		_text->setFillColor(_color);
+		_text.setFillColor(_color);
 		if (_blink && _selected)
 			_content += '|';
-		_text->setString(_content);
+		_text.setString(_content);
 		if (_blink && _selected) {
 			_content.erase(_content.getSize() - 1,
 				       _content.getSize());
@@ -58,16 +49,16 @@ void InputBox::onEvent(Scene &scene, const sf::Event &event) noexcept
 {
 	(void)scene;
 	if (event.type == sf::Event::MouseButtonPressed) {
-		if (_text->getGlobalBounds().contains(event.mouseButton.x,
-						      event.mouseButton.y)) {
+		if (_text.getGlobalBounds().contains(event.mouseButton.x,
+						     event.mouseButton.y)) {
 			_clicked = true;
 		} else {
 			_clicked = false;
 			_selected = false;
 		}
 	} else if (event.type == sf::Event::MouseButtonReleased
-		   && _text->getGlobalBounds().contains(event.mouseButton.x,
-							event.mouseButton.y)
+		   && _text.getGlobalBounds().contains(event.mouseButton.x,
+						       event.mouseButton.y)
 		   && _clicked == true) {
 		_selected = true;
 	}

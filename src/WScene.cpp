@@ -21,6 +21,50 @@ void WScene::callSubscribedEvents() noexcept
 			i->onEvent(*this, event);
 }
 
+static void eraseParentChilds(GameObject &go)
+{
+	auto parent = go.parent();
+
+	if (parent == nullptr)
+		return;
+	auto &childs = parent->getChilds();
+	for (auto it = childs.begin(); it != childs.end(); ++it) {
+		if ((*it)->toDestroy() == true) {
+			it = childs.erase(it);
+			if (it-- == childs.end())
+				return;
+		}
+	}
+}
+
+void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
+{
+	for (auto it = v.begin(); it != v.end(); ++it) {
+		auto &go = *it->get();
+		if (go.toDestroy()) {
+			eraseParentChilds(go);
+			it = v.erase(it);
+			if (it-- == v.end())
+				return;
+			continue;
+		}
+		auto &components = go.getComponents();
+		go.update(*this);
+		for (auto cit = components.begin(); cit != components.end();
+		     ++cit) {
+			auto &c = *cit->get();
+			if (c.toDestroy()) {
+				cit = components.erase(cit);
+				if (cit-- == components.end())
+					return;
+				continue;
+			}
+			c.update(*this, go);
+			c.display(_window);
+		}
+	}
+}
+
 void WScene::run() noexcept
 {
 	_running = true;
@@ -29,16 +73,8 @@ void WScene::run() noexcept
 		_window.clear();
 		callSubscribedEvents();
 		insertToAddObjects();
-		deleteToRemoveObjects();
-		for (auto &&it = _layeredObjects.rbegin();
-		     it != _layeredObjects.rend(); ++it) {
-			for (auto &&object : *it) {
-				for (auto &&c : object->getComponents()) {
-					c->update(*this, *object);
-					c->display(_window);
-				}
-				object->update(*this);
-			}
+		for (auto &&v : _layeredObjects) {
+			deleteUpdate(v);
 		}
 		_clock.refreshDeltaTime();
 		_window.display();

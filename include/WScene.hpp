@@ -20,6 +20,7 @@ class WScene : public Scene
 	void run() noexcept;
 
       protected:
+	void deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept;
 	void callSubscribedEvents() noexcept;
 	sf::RenderWindow _window;
 	std::vector<GameObject *> _subscribedEvents[sf::Event::Count + 1];

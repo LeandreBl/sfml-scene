@@ -3,9 +3,8 @@
 
 namespace sfs
 {
-Text::Text(const std::string &text, const sf::Font &font,
-	   uint32_t characterSize,
-	   const sf::Color &color) noexcept
+Text::Text(const sf::Font &font, const std::string &text,
+	   const sf::Color &color, uint32_t characterSize) noexcept
     : sf::Text(text, font, characterSize)
 {
 	setFillColor(color);
@@ -16,9 +15,9 @@ void Text::display(sf::RenderWindow &window) noexcept
 	window.draw(*this);
 }
 
-void Text::update(Scene &scene, GameObject &go) noexcept
+void Text::start(Scene &, GameObject &go) noexcept
 {
-	(void)scene;
 	setPosition(go.getPosition());
 }
+
 } // namespace sfs

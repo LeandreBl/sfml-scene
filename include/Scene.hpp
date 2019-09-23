@@ -44,10 +44,12 @@ class Scene
 	{
 		std::vector<T *> v;
 
-		for (auto &&i : _objects) {
-			T *p = dynamic_cast<T *>(i.get());
-			if (p != nullptr)
-				v.push_back(p);
+		for (auto &&i : _layeredObjects) {
+			for (auto &&go : i) {
+				T *p = dynamic_cast<T *>(go.get());
+				if (p != nullptr)
+					v.push_back(p);
+			}
 		}
 		for (auto &&i : _toAdd) {
 			T *p = dynamic_cast<T *>(i.get());
@@ -81,12 +83,10 @@ class Scene
 
       protected:
 	void insertToAddObjects() noexcept;
-	void deleteToRemoveObjects() noexcept;
+	void deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept;
 	std::string _name;
 	Clock _clock;
-	sf::Mutex _runMutex;
-	std::vector<std::unique_ptr<GameObject>> _objects;
-	std::vector<std::vector<GameObject *>> _layeredObjects;
+	std::vector<std::vector<std::unique_ptr<GameObject>>> _layeredObjects;
 	std::deque<std::unique_ptr<GameObject>> _toAdd;
 	std::unordered_map<std::string, sf::Font> _fonts;
 	std::unordered_map<std::string, sf::Image> _images;

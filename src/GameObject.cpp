@@ -13,8 +13,10 @@ GameObject::GameObject(const sf::Vector2f &position,
 
 GameObject::~GameObject()
 {
-	for (auto &&i : _childs)
+	for (auto &&i : _childs) {
+		i->parent(nullptr);
 		i->destroy();
+	}
 }
 
 std::vector<GameObject *> &GameObject::getChilds() noexcept
@@ -87,7 +89,7 @@ std::ostream &operator<<(std::ostream &os, const GameObject &object) noexcept
 	const sf::Vector2f &position = object.getPosition();
 
 	os << "{ \"" << object.name() << "\" "
-	   << "(" << position.x << ", " << position.y << ") }" << std::endl;
+	   << "(" << position.x << ", " << position.y << ") }";
 	return os;
 }
 } // namespace sfs

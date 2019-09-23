@@ -4,59 +4,70 @@
 namespace sfs
 {
 Scene::Scene(const std::string &name, uint32_t fps) noexcept
-    : _name(name), _clock(fps), _objects(), _layeredObjects(), _toAdd(),
-      _fonts(), _images(), _textures(), _soundBuffers(), _running(false)
+    : _name(name), _clock(fps), _layeredObjects(), _toAdd(), _fonts(),
+      _images(), _textures(), _soundBuffers(), _running(false)
 {
-	_objects.reserve(64);
-	_layeredObjects.reserve(10);
-}
-
-static void eraseObject(std::vector<GameObject *> &v, GameObject *key)
-{
-	auto rm = std::remove(v.begin(), v.end(), key);
-	auto go = *rm;
-
-	if (go == nullptr)
-		return;
-	auto parent = go->parent();
-	if (parent != nullptr) {
-		for (auto it = parent->getChilds().begin();
-		     it != parent->getChilds().end(); ++it) {
-			if ((*it)->toDestroy() == true) {
-				(*it)->parent(nullptr);
-				it = parent->getChilds().erase(it);
-				--it;
-			}
-		}
-	}
-	v.erase(rm);
+	_layeredObjects.resize(10);
+	for (auto &v : _layeredObjects)
+		v.reserve(64);
 }
 
 void Scene::insertToAddObjects() noexcept
 {
 	while (_toAdd.size() > 0) {
 		auto &i = _toAdd.front();
+		auto *go = i.get();
 		if (_layeredObjects.size() < i->layer() + 1)
 			_layeredObjects.resize(i->layer() + 1);
-		_layeredObjects[i->layer()].push_back(i.get());
-		if (i->parent())
-			i->parent()->getChilds().push_back(i.get());
-		i->start(*this);
-		for (auto &&c: i->getComponents())
-			c->start(*this, *i);
-		_objects.push_back(std::move(i));
+		_layeredObjects[i->layer()].push_back(std::move(i));
+		if (go->parent())
+			go->parent()->getChilds().push_back(go);
+		go->start(*this);
+		for (auto &&c : go->getComponents())
+			c->start(*this, *go);
 		_toAdd.pop_front();
 	}
 }
 
-void Scene::deleteToRemoveObjects() noexcept
+static void eraseParentChilds(GameObject &go)
 {
-	for (auto it = _objects.begin(); it != _objects.end(); ++it) {
-		auto *go = it->get();
-		if (go->toDestroy()) {
-			eraseObject(_layeredObjects[it->get()->layer()], go);
-			it = _objects.erase(it);
-			--it;
+	auto parent = go.parent();
+
+	if (parent != nullptr) {
+		auto childs = parent->getChilds();
+		for (auto it = childs.begin(); it != childs.end(); ++it) {
+			if ((*it)->toDestroy() == true)
+				(*it)->parent(nullptr);
+			it = childs.erase(it);
+			if (it-- == childs.end())
+				break;
+		}
+	}
+}
+
+void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
+{
+	for (auto it = v.begin(); it != v.end(); ++it) {
+		auto &go = *it->get();
+		if (go.toDestroy()) {
+			eraseParentChilds(go);
+			it = v.erase(it);
+			if (it-- == v.end())
+				return;
+			continue;
+		}
+		auto &components = go.getComponents();
+		go.update(*this);
+		for (auto cit = components.begin(); cit != components.end();
+		     ++cit) {
+			auto &c = *cit->get();
+			if (c.toDestroy()) {
+				cit = components.erase(cit);
+				if (cit-- == components.end())
+					return;
+				continue;
+			}
+			c.update(*this, go);
 		}
 	}
 }
@@ -67,14 +78,8 @@ void Scene::run() noexcept
 	_clock.reset();
 	while (_running) {
 		insertToAddObjects();
-		deleteToRemoveObjects();
-		for (auto &&it = _layeredObjects.rbegin();
-		     it != _layeredObjects.rend(); ++it) {
-			for (auto &&object : *it) {
-				for (auto &&c : object->getComponents())
-					c->update(*this, *object);
-				object->update(*this);
-			}
+		for (auto &&v : _layeredObjects) {
+			deleteUpdate(v);
 		}
 		_clock.refreshDeltaTime();
 	}
@@ -90,9 +95,11 @@ std::vector<GameObject *> Scene::getGameObjects(const std::string &name) const
 {
 	std::vector<GameObject *> v;
 
-	for (auto &&i : _objects)
-		if (i->name() == name)
-			v.push_back(i.get());
+	for (auto &&i : _layeredObjects)
+		for (auto &&go : i)
+			if (go.get()->name() == name)
+				v.push_back(go.get());
+
 	for (auto &&i : _toAdd)
 		if (i->name() == name)
 			v.push_back(i.get());
@@ -103,9 +110,11 @@ std::vector<GameObject *> Scene::getGameObjects(int tag) const noexcept
 {
 	std::vector<GameObject *> v;
 
-	for (auto &&i : _objects)
-		if (i->tag() == tag)
-			v.push_back(i.get());
+	for (auto &&i : _layeredObjects)
+		for (auto &&go : i)
+			if (go.get()->tag() == tag)
+				v.push_back(go.get());
+
 	for (auto &&i : _toAdd)
 		if (i->tag() == tag)
 			v.push_back(i.get());
@@ -191,7 +200,8 @@ sf::RenderWindow *Scene::getVideoHandle() noexcept
 	return nullptr;
 }
 
-void Scene::subscribe(const GameObject &object, const sf::Event::EventType &type) noexcept
+void Scene::subscribe(const GameObject &object,
+		      const sf::Event::EventType &type) noexcept
 {
 	// no window -> no events
 	(void)object;

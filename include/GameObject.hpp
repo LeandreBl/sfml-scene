@@ -16,8 +16,8 @@ class GameObject : public sf::Transformable
 	const uint32_t defaultLayer = 5;
 
 	GameObject(const sf::Vector2f &position = sf::Vector2f(0.f, 0.f), const std::string &name = "") noexcept;
-	GameObject(const GameObject &object) noexcept = default;
-	GameObject &operator=(GameObject &object) noexcept = default;
+	GameObject(const GameObject &) noexcept = default;
+	GameObject &operator=(GameObject &) noexcept = default;
 
 	void errorLog(const std::string &str) noexcept;
 

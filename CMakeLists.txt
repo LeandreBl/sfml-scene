@@ -19,8 +19,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g3 -Wall -Wextra -Wpedantic")
 file(GLOB_RECURSE LIB_SOURCES "src/*.cpp")
 file(GLOB_RECURSE LIB_HEADERS "include/*.hpp")
 
-find_package(Boost)
-
 add_library(${LIB_NAME} SHARED ${LIB_SOURCES} ${LIB_HEADERS})
 set_target_properties(${LIB_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories(${LIB_NAME} PRIVATE "./include")
