@@ -19,6 +19,7 @@ class Button : public UI
 	       uint32_t charSize = 32) noexcept;
 	Button(const Button &) noexcept = default;
 	Button &operator=(Button &) noexcept = default;
+        sf::FloatRect getGlobalBounds() const noexcept;
 	void setText(const std::string &buttonText) noexcept;
 	void setTexture(const sf::Texture &texture,
 			bool resetRect = false) noexcept;
@@ -28,8 +29,9 @@ class Button : public UI
 	void setFont(const sf::Font &font) noexcept;
 	void setTextSize(uint32_t size) noexcept;
 	void setTextColor(const sf::Color &color) noexcept;
+        void setScale(const sf::Vector2f &scale) noexcept;
 	void start(Scene &scene) noexcept;
-	void update(Scene &scene) noexcept;
+        void update(Scene &scene) noexcept;
 	void onEvent(Scene &scene, const sf::Event &event) noexcept;
 
       protected:

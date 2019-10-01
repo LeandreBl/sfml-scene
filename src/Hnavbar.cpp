@@ -19,6 +19,11 @@ Hnavbar::Hnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
 {
 }
 
+sf::FloatRect Hnavbar::getGlobalBounds() const noexcept
+{
+  return _background.getGlobalBounds();
+}
+  
 void Hnavbar::start(Scene &scene) noexcept
 {
 	scene.subscribe(*this, sf::Event::MouseButtonPressed);

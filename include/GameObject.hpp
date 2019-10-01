@@ -29,18 +29,18 @@ class GameObject : public sf::Transformable
 	void destroy() noexcept;
 
 	template <typename T, typename... Args>
-	T &addChild(Scene &scene, const Args &... args) noexcept
+	T &addChild(Scene &scene, Args &&... args) noexcept
 	{
 		auto &go = scene.addGameObject<T>(args...);
 		go.parent(this);
 		return go;
 	}
-
+  
 	template <typename T> std::vector<T *> getChilds() noexcept;
 	std::vector<GameObject *> &getChilds() noexcept;
 
 	template <typename T, typename... Args>
-	T &addComponent(const Args &... args) noexcept
+	T &addComponent(Args &&... args) noexcept
 	{
 		std::unique_ptr<T> c =
 			std::make_unique<T>(args...);
@@ -50,14 +50,14 @@ class GameObject : public sf::Transformable
 		return p;
 	}
 
-	template <typename T> std::vector<T *> getComponents() noexcept
+        template <typename T> std::vector<T *> getComponents() noexcept
 	{
 		std::vector<T *> v;
 
 		for (auto &&i : _components) {
 			auto *p = dynamic_cast<T *>(i.get());
 			if (p != nullptr)
-				v.push_back(i.get());
+				v.push_back(p);
 		}
 		return v;
 	}

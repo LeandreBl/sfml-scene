@@ -14,6 +14,11 @@ Button::Button(const sf::Vector2f &position, const sf::Texture &texture,
 {
 }
 
+sf::FloatRect Button::getGlobalBounds() const noexcept
+{
+  return _sprite.getGlobalBounds();
+}
+  
 void Button::setText(const std::string &buttonText) noexcept
 {
 	_text.setString(buttonText);
@@ -51,6 +56,11 @@ void Button::setTextColor(const sf::Color &color) noexcept
 	_text.setFillColor(color);
 }
 
+void Button::setScale(const sf::Vector2f &scale) noexcept
+{
+  _sprite.setScale(scale);
+}
+  
 void Button::start(Scene &scene) noexcept
 {
 	scene.subscribe(*this, sf::Event::MouseButtonPressed);
