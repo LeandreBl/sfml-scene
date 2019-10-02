@@ -3,10 +3,10 @@
 
 namespace sfs
 {
-Button::Button(const sf::Vector2f &position, const sf::Texture &texture,
-	       const std::function<void()> &onClick, const sf::Font &font,
-	       const std::string &text, const sf::Color &color,
-	       uint32_t charSize) noexcept
+Button::Button(const sf::Texture &texture, const sf::Font &font,
+	       const sf::Vector2f &position,
+	       const std::function<void()> &onClick, const std::string &text,
+	       const sf::Color &color, uint32_t charSize) noexcept
     : UI(position, "Button"), _sprite(addComponent<Sprite>(texture)),
       _text(addComponent<Text>(font, text, color, charSize)),
       _onClick(std::move(onClick)), _clickPos(0, 0), _movePos(0, 0),
@@ -16,9 +16,9 @@ Button::Button(const sf::Vector2f &position, const sf::Texture &texture,
 
 sf::FloatRect Button::getGlobalBounds() const noexcept
 {
-  return _sprite.getGlobalBounds();
+	return _sprite.getGlobalBounds();
 }
-  
+
 void Button::setText(const std::string &buttonText) noexcept
 {
 	_text.setString(buttonText);
@@ -58,9 +58,9 @@ void Button::setTextColor(const sf::Color &color) noexcept
 
 void Button::setScale(const sf::Vector2f &scale) noexcept
 {
-  _sprite.setScale(scale);
+	_sprite.setScale(scale);
 }
-  
+
 void Button::start(Scene &scene) noexcept
 {
 	scene.subscribe(*this, sf::Event::MouseButtonPressed);
@@ -88,10 +88,9 @@ void Button::update(Scene &) noexcept
 	auto rect = _sprite.getGlobalBounds();
 	auto textRect = _text.getGlobalBounds();
 	auto textLRect = _text.getLocalBounds();
-	_text.setPosition(rect.left + (rect.width - textRect.width) / 2.f
-				  - textLRect.left,
-			  rect.top + (rect.height - textRect.height) / 2.f
-				  - textLRect.top);
+	_text.setOffset(sf::Vector2f(
+		(rect.width - textRect.width) / 2.f - textLRect.left,
+		(rect.height - textRect.height) / 2.f - textLRect.top));
 }
 
 void Button::onEvent(Scene &, const sf::Event &event) noexcept

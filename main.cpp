@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "include/Text.hpp"
+#include "include/BasicShape.hpp"
 #include "include/WScene.hpp"
 #include "include/GameObject.hpp"
 #include "include/InputBox.hpp"
@@ -91,9 +91,8 @@ class Manager : public sfs::GameObject
 			*font, sf::Vector2f(10, 10), "spawn n*");
 
 		auto &button = scene.addGameObject<sfs::Button>(
-			sf::Vector2f(200, 10), *texture,
-			std::bind(&Manager::removeSpheres, this), *font,
-			"Reset");
+			*texture, *font, sf::Vector2f(200, 10),
+			std::bind(&Manager::removeSpheres, this), "Reset");
 
 		button.setTextColor(sf::Color(110, 110, 110));
 		button.setTextSize(26);

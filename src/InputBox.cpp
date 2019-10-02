@@ -45,9 +45,8 @@ void InputBox::update(Scene &scene) noexcept
 	}
 }
 
-void InputBox::onEvent(Scene &scene, const sf::Event &event) noexcept
+void InputBox::onEvent(Scene &, const sf::Event &event) noexcept
 {
-	(void)scene;
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (_text.getGlobalBounds().contains(event.mouseButton.x,
 						     event.mouseButton.y)) {

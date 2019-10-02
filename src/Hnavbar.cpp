@@ -12,8 +12,8 @@ Hnavbar::Hnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
 		 const sf::Color &color) noexcept
     : UI(position), _background(addComponent<Rectangle>(position, size, color)),
       _cursor(addComponent<Rectangle>(
-	      sf::Vector2f(position.x + size.x * (1 - percentage) / 2,
-			   position.y + size.x * (1 - percentage) / 2),
+	      sf::Vector2f(size.x * (1 - percentage) / 2,
+			   size.x * (1 - percentage) / 2),
 	      sf::Vector2f(size.x * percentage, size.y / 3), color * 0.7)),
       _color(color), _clickPosY(0), _cursorPosY(0), _clicked(false)
 {
@@ -21,9 +21,9 @@ Hnavbar::Hnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
 
 sf::FloatRect Hnavbar::getGlobalBounds() const noexcept
 {
-  return _background.getGlobalBounds();
+	return _background.getGlobalBounds();
 }
-  
+
 void Hnavbar::start(Scene &scene) noexcept
 {
 	scene.subscribe(*this, sf::Event::MouseButtonPressed);
@@ -39,17 +39,14 @@ void Hnavbar::setCursorColor(int x, int y) noexcept
 		_cursor.setFillColor(_color * 0.7);
 }
 
-float Hnavbar::maxPosY() const noexcept
+float Hnavbar::maxOffset() const noexcept
 {
-	return _background.getPosition().y + _background.getSize().y
-	       - _cursor.getSize().y
-	       - _background.getSize().x * (1 - percentage) / 2;
+	return _background.getSize().y - minOffset() - _cursor.getSize().y;
 }
 
-float Hnavbar::minPosY() const noexcept
+float Hnavbar::minOffset() const noexcept
 {
-	return _background.getPosition().y
-	       + _background.getSize().x * (1 - percentage) / 2;
+	return _background.getSize().x * (1 - percentage) / 2;
 }
 
 void Hnavbar::onEvent(Scene &, const sf::Event &event) noexcept
@@ -58,16 +55,15 @@ void Hnavbar::onEvent(Scene &, const sf::Event &event) noexcept
 		if (_clicked == false) {
 			setCursorColor(event.mouseMove.x, event.mouseMove.y);
 		} else {
-			float offset = event.mouseMove.y - _clickPosY;
-			sf::Vector2f newPos(_cursor.getPosition().x,
-					    _cursorPosY + offset);
-			float maxPos = maxPosY();
-			if (newPos.y > maxPos)
-				newPos.y = maxPos;
-			maxPos = minPosY();
-			if (newPos.y < maxPos)
-				newPos.y = maxPos;
-			_cursor.setPosition(newPos);
+			auto offset = _cursor.getOffset();
+			offset.y = event.mouseMove.y - _clickPosY;
+			float bound = maxOffset();
+			if (offset.y > bound)
+				offset.y = bound;
+			bound = minOffset();
+			if (offset.y < bound)
+				offset.y = bound;
+			_cursor.setOffset(offset);
 		}
 	} else if (event.type == sf::Event::MouseButtonPressed) {
 		if (_cursor.getGlobalBounds().contains(event.mouseButton.x,
@@ -83,39 +79,11 @@ void Hnavbar::onEvent(Scene &, const sf::Event &event) noexcept
 	}
 }
 
-void Hnavbar::setPosition(const sf::Vector2f &position) noexcept
-{
-	move(position - getPosition());
-}
-
-void Hnavbar::setPosition(float x, float y) noexcept
-{
-	sf::Vector2f diff = getPosition();
-
-	diff.x = x - diff.x;
-	diff.y = y - diff.y;
-	move(diff);
-}
-
-void Hnavbar::move(const sf::Vector2f &offset) noexcept
-{
-	GameObject::move(offset);
-	_background.move(offset);
-	_cursor.move(offset);
-	_clickPosY += offset.y;
-	_cursorPosY += offset.y;
-}
-
-void Hnavbar::move(float x, float y) noexcept
-{
-	move(sf::Vector2f(x, y));
-}
-
 float Hnavbar::getValue() const noexcept
 {
-	float min = minPosY();
-	float max = maxPosY() - min;
-	float pos = _cursor.getPosition().y - min;
+	float min = minOffset();
+	float max = maxOffset() - min;
+	float pos = _cursor.getOffset().y - min;
 	return pos / max;
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UI.hpp"
-#include "Shape.hpp"
+#include "BasicShape.hpp"
 
 namespace sfs
 {
@@ -14,17 +14,13 @@ class Hnavbar : public UI
 	Hnavbar(const Hnavbar &) noexcept = default;
 	Hnavbar &operator=(Hnavbar &) noexcept = default;
 	void start(Scene &scene) noexcept;
-	void setPosition(const sf::Vector2f &position) noexcept;
-	void setPosition(float x, float y) noexcept;
-	void move(const sf::Vector2f &offset) noexcept;
-	void move(float x, float y) noexcept;
 	void onEvent(Scene &scene, const sf::Event &event) noexcept;
 	float getValue() const noexcept;
         sf::FloatRect getGlobalBounds() const noexcept;
 
       protected:
-	float maxPosY() const noexcept;
-	float minPosY() const noexcept;
+	float maxOffset() const noexcept;
+	float minOffset() const noexcept;
 	void setCursorColor(int x, int y) noexcept;
 	Rectangle &_background;
 	Rectangle &_cursor;

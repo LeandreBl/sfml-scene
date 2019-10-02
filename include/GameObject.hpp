@@ -35,7 +35,7 @@ class GameObject : public sf::Transformable
 		go.parent(this);
 		return go;
 	}
-  
+
 	template <typename T> std::vector<T *> getChilds() noexcept;
 	std::vector<GameObject *> &getChilds() noexcept;
 
