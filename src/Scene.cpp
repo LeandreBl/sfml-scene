@@ -78,8 +78,9 @@ void Scene::run() noexcept
 	_clock.reset();
 	while (_running) {
 		insertToAddObjects();
-		for (auto &&v : _layeredObjects) {
-			deleteUpdate(v);
+		for (auto rit = _layeredObjects.rbegin();
+		     rit != _layeredObjects.rend(); ++rit) {
+			deleteUpdate(*rit);
 		}
 		_clock.refreshDeltaTime();
 	}
