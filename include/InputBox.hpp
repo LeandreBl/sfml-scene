@@ -22,6 +22,7 @@ class InputBox : public UI
 	void onEvent(Scene &scene, const sf::Event &event) noexcept;
 	std::string string() const noexcept;
 	void string(const std::string &string) noexcept;
+        sf::FloatRect getGlobalBounds() const noexcept;
 
       protected:
 	sf::Color _color;

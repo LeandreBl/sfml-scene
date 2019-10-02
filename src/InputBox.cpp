@@ -86,4 +86,9 @@ void InputBox::string(const std::string &string) noexcept
 {
 	_content = string;
 }
+
+sf::FloatRect InputBox::getGlobalBounds() const noexcept
+{
+  return _text.getGlobalBounds();
+}
 } // namespace sfs
