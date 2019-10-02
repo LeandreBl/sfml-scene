@@ -14,6 +14,10 @@ class Hnavbar : public UI
 	Hnavbar(const Hnavbar &) noexcept = default;
 	Hnavbar &operator=(Hnavbar &) noexcept = default;
 	void start(Scene &scene) noexcept;
+	void setPosition(const sf::Vector2f &position) noexcept;
+	void setPosition(float x, float y) noexcept;
+	void move(const sf::Vector2f &offset) noexcept;
+	void move(float x, float y) noexcept;
 	void onEvent(Scene &scene, const sf::Event &event) noexcept;
 	float getValue() const noexcept;
         sf::FloatRect getGlobalBounds() const noexcept;

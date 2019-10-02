@@ -83,6 +83,34 @@ void Hnavbar::onEvent(Scene &, const sf::Event &event) noexcept
 	}
 }
 
+void Hnavbar::setPosition(const sf::Vector2f &position) noexcept
+{
+	move(position - getPosition());
+}
+
+void Hnavbar::setPosition(float x, float y) noexcept
+{
+	sf::Vector2f diff = getPosition();
+
+	diff.x = x - diff.x;
+	diff.y = y - diff.y;
+	move(diff);
+}
+
+void Hnavbar::move(const sf::Vector2f &offset) noexcept
+{
+	GameObject::move(offset);
+	_background.move(offset);
+	_cursor.move(offset);
+	_clickPosY += offset.y;
+	_cursorPosY += offset.y;
+}
+
+void Hnavbar::move(float x, float y) noexcept
+{
+	move(sf::Vector2f(x, y));
+}
+
 float Hnavbar::getValue() const noexcept
 {
 	float min = minPosY();
