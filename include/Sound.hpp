@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <IComponent.hpp>
 
-namespace cf
+namespace sfs
 {
   class Sound : public sfs::IComponent, public sf::Sound
   {
