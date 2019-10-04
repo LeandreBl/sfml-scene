@@ -15,7 +15,7 @@ Hnavbar::Hnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
 	      sf::Vector2f(size.x * (1 - percentage) / 2,
 			   size.x * (1 - percentage) / 2),
 	      sf::Vector2f(size.x * percentage, size.y / 3), color * 0.7)),
-      _color(color), _clickPosY(0), _cursorPosY(0), _clicked(false)
+      _color(color), _clickPosY(0), _clicked(false)
 {
 }
 
@@ -56,13 +56,14 @@ void Hnavbar::onEvent(Scene &, const sf::Event &event) noexcept
 			setCursorColor(event.mouseMove.x, event.mouseMove.y);
 		} else {
 			auto offset = _cursor.getOffset();
-			offset.y = event.mouseMove.y - _clickPosY;
+			offset.y += event.mouseMove.y - _clickPosY;
 			float bound = maxOffset();
 			if (offset.y > bound)
 				offset.y = bound;
 			bound = minOffset();
 			if (offset.y < bound)
 				offset.y = bound;
+			_clickPosY = event.mouseMove.y;
 			_cursor.setOffset(offset);
 		}
 	} else if (event.type == sf::Event::MouseButtonPressed) {
@@ -70,7 +71,6 @@ void Hnavbar::onEvent(Scene &, const sf::Event &event) noexcept
 						       event.mouseButton.y)) {
 			_clicked = true;
 			_clickPosY = event.mouseButton.y;
-			_cursorPosY = _cursor.getPosition().y;
 			_cursor.setFillColor(_color * 0.3);
 		}
 	} else if (event.type == sf::Event::MouseButtonReleased) {

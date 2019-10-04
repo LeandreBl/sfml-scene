@@ -89,4 +89,19 @@ class GameObject : public sf::Transformable
 	bool _toDestroy;
 };
 std::ostream &operator<<(std::ostream &os, const GameObject &object) noexcept;
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const sf::Vector2<T> &v) noexcept
+{
+	os << "(" << v.x << ", " << v.y << ")";
+	return os;
+}
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const sf::Vector3<T> &v) noexcept
+{
+	os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+	return os;
+}
+
 } // namespace sfs

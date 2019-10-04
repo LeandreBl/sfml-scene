@@ -86,10 +86,7 @@ void GameObject::errorLog(const std::string &str) noexcept
 
 std::ostream &operator<<(std::ostream &os, const GameObject &object) noexcept
 {
-	const sf::Vector2f &position = object.getPosition();
-
-	os << "{ \"" << object.name() << "\" "
-	   << "(" << position.x << ", " << position.y << ") }";
+	os << "{ \"" << object.name() << "\" " << object.getPosition() << " }";
 	return os;
 }
 } // namespace sfs

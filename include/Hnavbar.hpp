@@ -26,7 +26,6 @@ class Hnavbar : public UI
 	Rectangle &_cursor;
 	sf::Color _color;
 	float _clickPosY;
-	float _cursorPosY;
 	bool _clicked;
 };
 } // namespace sfs
