@@ -15,7 +15,8 @@ class GameObject : public sf::Transformable
       public:
 	const uint32_t defaultLayer = 5;
 
-	GameObject(const sf::Vector2f &position = sf::Vector2f(0.f, 0.f), const std::string &name = "") noexcept;
+	GameObject(const sf::Vector2f &position = sf::Vector2f(0.f, 0.f),
+		   const std::string &name = "") noexcept;
 	GameObject(const GameObject &) noexcept = default;
 	GameObject &operator=(GameObject &) noexcept = default;
 
@@ -24,7 +25,7 @@ class GameObject : public sf::Transformable
 	virtual ~GameObject();
 	virtual void start(Scene &) noexcept {};
 	virtual void update(Scene &) noexcept {};
-	virtual void onEvent(Scene &, const sf::Event &) {};
+	virtual void onEvent(Scene &, const sf::Event &){};
 
 	void destroy() noexcept;
 
@@ -42,15 +43,14 @@ class GameObject : public sf::Transformable
 	template <typename T, typename... Args>
 	T &addComponent(Args &&... args) noexcept
 	{
-		std::unique_ptr<T> c =
-			std::make_unique<T>(args...);
+		std::unique_ptr<T> c = std::make_unique<T>(args...);
 		auto &p = *c.get();
 
 		_components.push_back(std::move(c));
 		return p;
 	}
 
-        template <typename T> std::vector<T *> getComponents() noexcept
+	template <typename T> std::vector<T *> getComponents() noexcept
 	{
 		std::vector<T *> v;
 
@@ -75,6 +75,8 @@ class GameObject : public sf::Transformable
 	uint32_t layer() const noexcept;
 	void layer(uint32_t layer) noexcept;
 
+	std::vector<sf::Event::EventType> &getSubscribedEvents() noexcept;
+
 	bool toDestroy() const noexcept;
 
       protected:
@@ -83,6 +85,7 @@ class GameObject : public sf::Transformable
 	std::string _name;
 	GameObject *_parent;
 	int _tag;
+	std::vector<sf::Event::EventType> _subscribedEvents;
 	std::vector<GameObject *> _childs;
 	std::vector<std::unique_ptr<IComponent>> _components;
 	uint32_t _layer;

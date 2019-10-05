@@ -74,9 +74,9 @@ class Scene
 	const sf::SoundBuffer *
 	getAssetSoundBuffer(const std::string &name) noexcept;
 
-	virtual void subscribe(const GameObject &object,
+	virtual void subscribe(GameObject &object,
 			       const sf::Event::EventType &type) noexcept;
-	virtual void unsubscribe(const GameObject &object,
+	virtual void unsubscribe(GameObject &object,
 				 const sf::Event::EventType &type) noexcept;
 
 	virtual sf::RenderWindow *getVideoHandle() noexcept;

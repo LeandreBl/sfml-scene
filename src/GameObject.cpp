@@ -5,8 +5,9 @@ namespace sfs
 {
 GameObject::GameObject(const sf::Vector2f &position,
 		       const std::string &name) noexcept
-    : sf::Transformable(), _name(name), _parent(nullptr), _tag(0), _childs(),
-      _components(), _layer(GameObject::defaultLayer), _toDestroy(false)
+    : sf::Transformable(), _name(name), _parent(nullptr), _tag(0),
+      _subscribedEvents(), _childs(), _components(),
+      _layer(GameObject::defaultLayer), _toDestroy(false)
 {
 	setPosition(position);
 }
@@ -67,6 +68,11 @@ uint32_t GameObject::layer() const noexcept
 void GameObject::layer(uint32_t layer) noexcept
 {
 	_layer = layer;
+}
+
+std::vector<sf::Event::EventType> &GameObject::getSubscribedEvents() noexcept
+{
+	return _subscribedEvents;
 }
 
 bool GameObject::toDestroy() const noexcept

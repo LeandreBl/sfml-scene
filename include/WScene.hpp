@@ -12,14 +12,16 @@ class WScene : public Scene
       public:
 	WScene(const std::string &name, uint32_t fps) noexcept;
 	sf::RenderWindow *getWindow() noexcept;
-	void subscribe(const GameObject &object,
+	void subscribe(GameObject &object,
 		       const sf::Event::EventType &type) noexcept;
-	void unsubscribe(const GameObject &object,
+	void unsubscribe(GameObject &object,
 			 const sf::Event::EventType &type) noexcept;
 	void framerate(uint32_t framerate) noexcept;
 	void run() noexcept;
 
       protected:
+	void eraseParentChilds(GameObject &go) noexcept;
+	void deleteGameObjectEvents(GameObject *object) noexcept;
 	void deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept;
 	void callSubscribedEvents() noexcept;
 	sf::RenderWindow _window;

@@ -201,20 +201,14 @@ sf::RenderWindow *Scene::getVideoHandle() noexcept
 	return nullptr;
 }
 
-void Scene::subscribe(const GameObject &object,
-		      const sf::Event::EventType &type) noexcept
+void Scene::subscribe(GameObject &, const sf::Event::EventType &) noexcept
 {
 	// no window -> no events
-	(void)object;
-	(void)type;
 }
 
-void Scene::unsubscribe(const GameObject &object,
-			const sf::Event::EventType &type) noexcept
+void Scene::unsubscribe(GameObject &, const sf::Event::EventType &) noexcept
 {
 	// no window -> no events
-	(void)object;
-	(void)type;
 }
 
 } // namespace sfs
