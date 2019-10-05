@@ -18,7 +18,8 @@ void WScene::callSubscribedEvents() noexcept
 
 	while (_window.pollEvent(event))
 		for (auto &&i : _subscribedEvents[event.type])
-			i->onEvent(*this, event);
+			if (!i->toDestroy())
+				i->onEvent(*this, event);
 }
 
 static void eraseParentChilds(GameObject &go)
@@ -31,8 +32,9 @@ static void eraseParentChilds(GameObject &go)
 	for (auto it = childs.begin(); it != childs.end(); ++it) {
 		if ((*it)->toDestroy() == true) {
 			it = childs.erase(it);
-			if (it-- == childs.end())
+			if (it == childs.end())
 				return;
+			--it;
 		}
 	}
 }
@@ -44,8 +46,9 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 		if (go.toDestroy()) {
 			eraseParentChilds(go);
 			it = v.erase(it);
-			if (it-- == v.end())
+			if (it == v.end())
 				return;
+			--it;
 			continue;
 		}
 		auto &components = go.getComponents();
@@ -55,8 +58,9 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 			auto &c = *cit->get();
 			if (c.toDestroy()) {
 				cit = components.erase(cit);
-				if (cit-- == components.end())
+				if (cit == components.end())
 					break;
+				--cit;
 				continue;
 			}
 			c.update(*this, go);
