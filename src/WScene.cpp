@@ -17,11 +17,22 @@ void WScene::callSubscribedEvents() noexcept
 	sf::Event event;
 
 	while (_window.pollEvent(event))
-		for (auto &&i : _subscribedEvents[event.type])
+		for (auto &i : _subscribedEvents[event.type])
 			i->onEvent(*this, event);
 }
 
-static void eraseParentChilds(GameObject &go)
+void WScene::deleteGameObjectEvents(GameObject *object) noexcept
+{
+	auto &v = object->getSubscribedEvents();
+
+	for (auto &&i : v) {
+		auto &sv = _subscribedEvents[i];
+		sv.erase(std::remove(sv.begin(), sv.end(), object));
+	}
+	v.clear();
+}
+
+void WScene::eraseParentChilds(GameObject &go) noexcept
 {
 	auto parent = go.parent();
 
@@ -30,9 +41,11 @@ static void eraseParentChilds(GameObject &go)
 	auto &childs = parent->getChilds();
 	for (auto it = childs.begin(); it != childs.end(); ++it) {
 		if ((*it)->toDestroy() == true) {
+			deleteGameObjectEvents(*it);
 			it = childs.erase(it);
-			if (it-- == childs.end())
+			if (it == childs.end())
 				return;
+			--it;
 		}
 	}
 }
@@ -43,9 +56,11 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 		auto &go = *it->get();
 		if (go.toDestroy()) {
 			eraseParentChilds(go);
+			deleteGameObjectEvents(it->get());
 			it = v.erase(it);
-			if (it-- == v.end())
+			if (it == v.end())
 				return;
+			--it;
 			continue;
 		}
 		auto &components = go.getComponents();
@@ -55,8 +70,9 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 			auto &c = *cit->get();
 			if (c.toDestroy()) {
 				cit = components.erase(cit);
-				if (cit-- == components.end())
+				if (cit == components.end())
 					break;
+				--cit;
 				continue;
 			}
 			c.update(*this, go);
@@ -94,22 +110,25 @@ void WScene::framerate(uint32_t framerate) noexcept
 	_window.setFramerateLimit(framerate);
 }
 
-void WScene::subscribe(const GameObject &object,
+void WScene::subscribe(GameObject &object,
 		       const sf::Event::EventType &type) noexcept
 {
 	for (auto &&i : _subscribedEvents[type])
 		if (i == &object)
 			return;
-	_subscribedEvents[type].push_back(const_cast<GameObject *>(&object));
+	_subscribedEvents[type].push_back(&object);
+	object.getSubscribedEvents().push_back(type);
 }
 
-void WScene::unsubscribe(const GameObject &object,
+void WScene::unsubscribe(GameObject &object,
 			 const sf::Event::EventType &type) noexcept
 {
 	for (auto it = _subscribedEvents[type].begin();
 	     it != _subscribedEvents[type].end(); ++it) {
 		if (*it == &object) {
 			_subscribedEvents[type].erase(it);
+			auto &sv = object.getSubscribedEvents();
+			sv.erase(std::remove(sv.begin(), sv.end(), type));
 			return;
 		}
 	}
