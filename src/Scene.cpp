@@ -64,7 +64,7 @@ void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 			if (c.toDestroy()) {
 				cit = components.erase(cit);
 				if (cit-- == components.end())
-					return;
+					break;
 				continue;
 			}
 			c.update(*this, go);
