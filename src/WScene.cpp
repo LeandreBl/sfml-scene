@@ -43,9 +43,8 @@ void WScene::eraseParentChilds(GameObject &go) noexcept
 		if ((*it)->toDestroy() == true) {
 			deleteGameObjectEvents(*it);
 			it = childs.erase(it);
-			if (it == childs.end())
+			if (it-- == childs.end())
 				return;
-			--it;
 		}
 	}
 }
@@ -58,9 +57,8 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 			eraseParentChilds(go);
 			deleteGameObjectEvents(it->get());
 			it = v.erase(it);
-			if (it == v.end())
+			if (it-- == v.end())
 				return;
-			--it;
 			continue;
 		}
 		auto &components = go.getComponents();
@@ -70,9 +68,8 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 			auto &c = *cit->get();
 			if (c.toDestroy()) {
 				cit = components.erase(cit);
-				if (cit == components.end())
+				if (cit-- == components.end())
 					break;
-				--cit;
 				continue;
 			}
 			c.update(*this, go);
