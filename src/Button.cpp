@@ -75,6 +75,7 @@ void Button::update(Scene &) noexcept
 		if (_pressed) {
 			_sprite.setColor(sf::Color(110, 110, 110));
 			_onClick();
+			_pressed = false;
 		} else {
 			_moved = false;
 		}
