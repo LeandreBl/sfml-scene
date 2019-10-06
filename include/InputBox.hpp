@@ -53,6 +53,7 @@ class CustomBox : public InputBox
 			{
 				InputBox::onEvent(scene, event);
 				if (event.type == sf::Event::TextEntered && _selected) {
+					if (event.text.unicode != '\b') {
 					auto found = _chars.find(event.text.unicode);
 					if (found == std::string::npos) {
 						auto content = _content.toWideString();
@@ -61,6 +62,7 @@ class CustomBox : public InputBox
 							_content = content;
 						}
 					}
+				}
 				}
 			}
 	protected:
