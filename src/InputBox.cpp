@@ -63,7 +63,7 @@ void InputBox::onEvent(Scene &, const sf::Event &event) noexcept
 	}
 	if (_selected == true) {
 		if (event.type == sf::Event::TextEntered) {
-			if (event.text.unicode == 8) {
+			if (event.text.unicode == '\b') {
 				if (_content.getSize())
 					_content.erase(_content.getSize() - 1,
 						       _content.getSize());
