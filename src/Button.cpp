@@ -61,6 +61,11 @@ void Button::setScale(const sf::Vector2f &scale) noexcept
 	_sprite.setScale(scale);
 }
 
+void Button::setRotate(const float &angle) noexcept
+{
+	_sprite.setRotation(angle);
+}
+
 void Button::start(Scene &scene) noexcept
 {
 	scene.subscribe(*this, sf::Event::MouseButtonPressed);

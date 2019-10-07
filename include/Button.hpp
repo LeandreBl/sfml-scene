@@ -29,6 +29,7 @@ class Button : public UI
 	void setTextSize(uint32_t size) noexcept;
 	void setTextColor(const sf::Color &color) noexcept;
 	void setScale(const sf::Vector2f &scale) noexcept;
+	void setRotate(const float &angle) noexcept;
 	void start(Scene &scene) noexcept;
 	void update(Scene &scene) noexcept;
 	void onEvent(Scene &scene, const sf::Event &event) noexcept;
