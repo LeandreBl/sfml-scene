@@ -27,12 +27,13 @@ float Clock::timeScale() const noexcept
 
 uint32_t Clock::framerate() const noexcept
 {
-	return 1.0 / _lastDeltaTime;
+	return _framerate;
 }
 
 void Clock::framerate(uint32_t framerate) noexcept
 {
 	_framerate = framerate;
+	_lastDeltaTime = 1.f / _framerate;
 }
 
 float Clock::getTime() const noexcept

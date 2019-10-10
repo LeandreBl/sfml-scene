@@ -65,8 +65,9 @@ class Scene
 	void timeScale(float timescale) noexcept;
 	float timeScale() const noexcept;
 
-	void framerate(uint32_t framerate) noexcept;
+	virtual void framerate(uint32_t framerate) noexcept;
 	uint32_t framerate() const noexcept;
+	uint32_t getRealFramerate() const noexcept;
 
 	const sf::Font *getAssetFont(const std::string &name) noexcept;
 	const sf::Texture *getAssetTexture(const std::string &name) noexcept;

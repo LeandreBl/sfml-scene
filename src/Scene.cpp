@@ -156,6 +156,11 @@ uint32_t Scene::framerate() const noexcept
 	return _clock.framerate();
 }
 
+uint32_t Scene::getRealFramerate() const noexcept
+{
+	return 1.f / _clock.getDeltaTime();
+}
+
 template <typename T>
 const T *getAsset(const std::string &name,
 		  std::unordered_map<std::string, T> &map)
