@@ -9,8 +9,7 @@ Button::Button(const sf::Texture &texture, const sf::Font &font,
 	       const sf::Color &color, uint32_t charSize) noexcept
     : UI(position, "Button"), _sprite(addComponent<Sprite>(texture)),
       _text(addComponent<Text>(font, text, color, charSize)),
-      _onClick(std::move(onClick)), _clickPos(0, 0), _movePos(0, 0),
-      _moved(false), _pressed(false)
+      _onClick(std::move(onClick)), _pressed(false)
 {
 }
 
@@ -75,22 +74,6 @@ void Button::start(Scene &scene) noexcept
 
 void Button::update(Scene &) noexcept
 {
-	if (_pressed) {
-		_pressed = _sprite.getGlobalBounds().contains(_clickPos);
-		if (_pressed) {
-			_sprite.setColor(sf::Color(110, 110, 110));
-			_onClick();
-			_pressed = false;
-		} else {
-			_moved = false;
-		}
-	} else if (_moved) {
-		_moved = _sprite.getGlobalBounds().contains(_movePos);
-		if (_moved)
-			_sprite.setColor(sf::Color(170, 170, 170));
-	} else {
-		_sprite.setColor(sf::Color::White);
-	}
 	auto rect = _sprite.getGlobalBounds();
 	auto textRect = _text.getGlobalBounds();
 	auto textLRect = _text.getLocalBounds();
@@ -99,19 +82,31 @@ void Button::update(Scene &) noexcept
 		(rect.height - textRect.height) / 2.f - textLRect.top));
 }
 
+static void setColor(sf::Sprite &sprite, float x, float y) noexcept
+{
+	if (sprite.getGlobalBounds().contains(x, y)) {
+		sprite.setColor(sf::Color(170, 170, 170));
+	} else {
+		sprite.setColor(sf::Color::White);
+	}
+}
+
 void Button::onEvent(Scene &, const sf::Event &event) noexcept
 {
-	if (event.type == sf::Event::MouseMoved) {
-		_moved = true;
-		_movePos = sf::Vector2f(event.mouseMove.x, event.mouseMove.y);
+	if (event.type == sf::Event::MouseButtonPressed
+	    && _sprite.getGlobalBounds().contains(event.mouseButton.x,
+						  event.mouseButton.y)) {
+		if (_pressed == false) {
+			_pressed = true;
+			_sprite.setColor(sf::Color(110, 110, 110));
+			_onClick();
+		} else {
+		}
+	} else if (event.type == sf::Event::MouseMoved) {
+		setColor(_sprite, event.mouseMove.x, event.mouseMove.y);
 	} else if (event.type == sf::Event::MouseButtonReleased) {
 		_pressed = false;
-		_clickPos =
-			sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
-	} else if (event.type == sf::Event::MouseButtonPressed) {
-		_pressed = true;
-		_clickPos =
-			sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
+		setColor(_sprite, event.mouseButton.x, event.mouseButton.y);
 	}
 }
 } // namespace sfs

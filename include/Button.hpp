@@ -38,9 +38,6 @@ class Button : public UI
 	Sprite &_sprite;
 	Text &_text;
 	std::function<void()> _onClick;
-	sf::Vector2f _clickPos;
-	sf::Vector2f _movePos;
-	bool _moved;
 	bool _pressed;
 };
 } // namespace sfs
