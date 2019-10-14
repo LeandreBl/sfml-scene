@@ -2,6 +2,7 @@
 build/*
 build.sh
 a.out
+main.cpp
 # Prerequisites
 *.d
 
