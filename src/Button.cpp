@@ -9,8 +9,7 @@ Button::Button(const sf::Texture &texture, const sf::Font &font,
 	       const sf::Color &color, uint32_t charSize) noexcept
     : UI(position, "Button"), _sprite(addComponent<Sprite>(texture)),
       _text(addComponent<Text>(font, text, color, charSize)),
-      _onClick(std::move(onClick)), _clickPos(0, 0), _movePos(0, 0),
-      _moved(false), _pressed(false)
+      _onClick(std::move(onClick)), _pressed(false)
 {
 }
 
