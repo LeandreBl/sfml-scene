@@ -107,4 +107,12 @@ std::ostream &operator<<(std::ostream &os, const sf::Vector3<T> &v) noexcept
 	return os;
 }
 
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const sf::Rect<T> &rect) noexcept
+{
+	os << "[(" << rect.top << ", " << rect.left << "), (" << rect.width
+	   << ", " << rect.height << ")]";
+	return os;
+}
+
 } // namespace sfs

@@ -87,4 +87,14 @@ float Hnavbar::getValue() const noexcept
 	return pos / max;
 }
 
+void Hnavbar::setTexture(const sf::Texture &texture) noexcept
+{
+	_background.setTexture(&texture);
+}
+
+void Hnavbar::setCursorTexture(const sf::Texture &texture) noexcept
+{
+	_cursor.setTexture(&texture);
+}
+
 } // namespace sfs

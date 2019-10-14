@@ -33,4 +33,7 @@ sf::Color &operator*=(sf::Color &color, const T &mul)
 	color.b *= mul;
 	return color;
 }
+
+std::ostream &operator<<(std::ostream &os, const sf::Color &color);
+
 } // namespace sfs

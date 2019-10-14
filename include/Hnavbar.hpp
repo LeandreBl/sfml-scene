@@ -16,7 +16,9 @@ class Hnavbar : public UI
 	void start(Scene &scene) noexcept;
 	void onEvent(Scene &scene, const sf::Event &event) noexcept;
 	float getValue() const noexcept;
-    sf::FloatRect getGlobalBounds() const noexcept;
+	sf::FloatRect getGlobalBounds() const noexcept;
+	void setCursorTexture(const sf::Texture &texture) noexcept;
+	void setTexture(const sf::Texture &texture) noexcept;
 
       protected:
 	float maxOffset() const noexcept;

@@ -7,7 +7,8 @@
 
 namespace sfs
 {
-template <typename DrawableShape> class BasicShape : public IComponent, public DrawableShape
+template <typename DrawableShape>
+class BasicShape : public IComponent, public DrawableShape
 {
       public:
 	template <typename... Args>
