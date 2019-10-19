@@ -18,7 +18,7 @@ class Popup : public UI
 	void clear() noexcept;
 	void pop(size_t n = 1) noexcept;
 	void update(Scene &scene) noexcept;
-        sf::FloatRect getGlobalBounds() noexcept {return _box.getGlobalBounds();};
+        sf::FloatRect getGlobalBounds() noexcept {return _text.getGlobalBounds();};
 	protected:
 	void clean() noexcept;
 	sf::Uint8 getAlpha() const noexcept;
