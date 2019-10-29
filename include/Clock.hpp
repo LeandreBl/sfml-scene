@@ -21,6 +21,7 @@ class Clock
 	float getTime() const noexcept;
 	float getRealTime() const noexcept;
 	void refreshDeltaTime() noexcept;
+	sf::Time getNative() const noexcept;
 
 	private:
 	sf::Clock _clock;

@@ -51,6 +51,11 @@ float Clock::getDeltaTime() const noexcept
 	return _lastDeltaTime * _timeScale;
 }
 
+sf::Time Clock::getNative() const noexcept
+{
+	return _clock.getElapsedTime();
+}
+
 void Clock::refreshDeltaTime() noexcept
 {
 	float rtime = _clock.getElapsedTime().asSeconds();

@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "Scene.hpp"
 #include "GameObject.hpp"
 
@@ -77,12 +79,15 @@ void Scene::run() noexcept
 	_running = true;
 	_clock.reset();
 	while (_running) {
+		auto t1 = _clock.getNative();
 		insertToAddObjects();
 		for (auto rit = _layeredObjects.rbegin();
 		     rit != _layeredObjects.rend(); ++rit) {
 			deleteUpdate(*rit);
 		}
 		_clock.refreshDeltaTime();
+		auto t2 = _clock.getNative();
+		sf::sleep(sf::microseconds(1000000 / _clock.framerate()) - (t2 - t1));
 	}
 }
 
