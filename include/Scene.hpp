@@ -28,7 +28,7 @@ class Scene
 	void close() noexcept;
 
 	template <typename T, typename... Args>
-	T &addGameObject(const Args &... args) noexcept
+	T &addGameObject(Args &... args) noexcept
 	{
 		std::unique_ptr<T> go = std::make_unique<T>(args...);
 		auto &i = *go.get();
