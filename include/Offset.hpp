@@ -1,6 +1,7 @@
 #pragma once
 
 #include <IComponent.hpp>
+#include <GameObject.hpp>
 
 namespace sfs
 {

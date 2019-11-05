@@ -3,6 +3,7 @@
 #include <SFML/System.hpp>
 
 #include "IComponent.hpp"
+#include <GameObject.hpp>
 
 namespace sfs
 {
