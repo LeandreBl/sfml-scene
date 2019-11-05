@@ -10,7 +10,7 @@ class Velocity : public sfs::IComponent
 {
       public:
 	Velocity(const sf::Vector2f &speed = sf::Vector2f(0, 0),
-		 const sf::Vector2f &accel = sf::Vector2f(0, 0)) noexcept
+		 const sf::Vector2f &accel = sf::Vector2f(1, 1)) noexcept
 	    : _speed(speed), _accel(accel){};
 	void addAcceleration(const sf::Vector2f &add) noexcept
 	{
