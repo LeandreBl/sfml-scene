@@ -5,14 +5,14 @@
 
 namespace sfs
 {
-class Hnavbar : public UI
+class Vnavbar : public UI
 {
       public:
-	Hnavbar(const sf::Vector2f &position = sf::Vector2f(0, 0),
+	Vnavbar(const sf::Vector2f &position = sf::Vector2f(0, 0),
 		const sf::Vector2f &size = sf::Vector2f(30, 100),
 		const sf::Color &color = sf::Color::White) noexcept;
-	Hnavbar(const Hnavbar &) noexcept = default;
-	Hnavbar &operator=(Hnavbar &) noexcept = default;
+	Vnavbar(const Vnavbar &) noexcept = default;
+	Vnavbar &operator=(Vnavbar &) noexcept = default;
 	void start(Scene &scene) noexcept;
 	void onEvent(Scene &scene, const sf::Event &event) noexcept;
 	float getValue() const noexcept;
@@ -27,7 +27,7 @@ class Hnavbar : public UI
 	Rectangle &_background;
 	Rectangle &_cursor;
 	sf::Color _color;
-	float _clickPosX;
+	float _clickPosY;
 	bool _clicked;
 };
 } // namespace sfs
