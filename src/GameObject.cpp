@@ -1,13 +1,18 @@
+#include "Overloads.hpp"
 #include "GameObject.hpp"
 #include "WScene.hpp"
 
-namespace sfs
-{
-GameObject::GameObject(const sf::Vector2f &position,
-		       const std::string &name) noexcept
-    : sf::Transformable(), _name(name), _parent(nullptr), _tag(0),
-      _subscribedEvents(), _childs(), _components(),
-      _layer(GameObject::defaultLayer), _toDestroy(false)
+namespace sfs {
+GameObject::GameObject(const sf::Vector2f &position, const std::string &name) noexcept
+	: sf::Transformable()
+	, _name(name)
+	, _parent(nullptr)
+	, _tag(0)
+	, _subscribedEvents()
+	, _childs()
+	, _components()
+	, _layer(GameObject::defaultLayer)
+	, _toDestroy(false)
 {
 	setPosition(position);
 }
@@ -88,11 +93,5 @@ void GameObject::destroy() noexcept
 void GameObject::errorLog(const std::string &str) noexcept
 {
 	std::cerr << "Error: " << *this << ": " << str << std::endl;
-}
-
-std::ostream &operator<<(std::ostream &os, const GameObject &object) noexcept
-{
-	os << "{ \"" << object.name() << "\" " << object.getPosition() << " }";
-	return os;
 }
 } // namespace sfs

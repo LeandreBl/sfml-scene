@@ -8,10 +8,8 @@
 #include "Scene.hpp"
 #include "IComponent.hpp"
 
-namespace sfs
-{
-class GameObject : public sf::Transformable
-{
+namespace sfs {
+class GameObject : public sf::Transformable {
       public:
 	const uint32_t defaultLayer = 5;
 
@@ -29,8 +27,7 @@ class GameObject : public sf::Transformable
 
 	void destroy() noexcept;
 
-	template <typename T, typename... Args>
-	T &addChild(Scene &scene, Args &&... args) noexcept
+	template <typename T, typename... Args> T &addChild(Scene &scene, Args &&... args) noexcept
 	{
 		auto &go = scene.addGameObject<T>(args...);
 		go.parent(this);
@@ -40,8 +37,7 @@ class GameObject : public sf::Transformable
 	template <typename T> std::vector<T *> getChilds() noexcept;
 	std::vector<GameObject *> &getChilds() noexcept;
 
-	template <typename T, typename... Args>
-	T &addComponent(Args &&... args) noexcept
+	template <typename T, typename... Args> T &addComponent(Args &&... args) noexcept
 	{
 		std::unique_ptr<T> c = std::make_unique<T>(args...);
 		auto &p = *c.get();
@@ -80,8 +76,7 @@ class GameObject : public sf::Transformable
 	bool toDestroy() const noexcept;
 
       protected:
-	void addChild(Scene &scene,
-		      std::unique_ptr<GameObject> &object) noexcept;
+	void addChild(Scene &scene, std::unique_ptr<GameObject> &object) noexcept;
 	std::string _name;
 	GameObject *_parent;
 	int _tag;
@@ -91,28 +86,4 @@ class GameObject : public sf::Transformable
 	uint32_t _layer;
 	bool _toDestroy;
 };
-std::ostream &operator<<(std::ostream &os, const GameObject &object) noexcept;
-
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const sf::Vector2<T> &v) noexcept
-{
-	os << "(" << v.x << ", " << v.y << ")";
-	return os;
-}
-
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const sf::Vector3<T> &v) noexcept
-{
-	os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
-	return os;
-}
-
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const sf::Rect<T> &rect) noexcept
-{
-	os << "[(" << rect.top << ", " << rect.left << "), (" << rect.width
-	   << ", " << rect.height << ")]";
-	return os;
-}
-
 } // namespace sfs
