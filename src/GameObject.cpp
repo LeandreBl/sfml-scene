@@ -1,4 +1,5 @@
-#include "Overloads.hpp"
+#include <sstream>
+
 #include "GameObject.hpp"
 #include "WScene.hpp"
 
@@ -85,6 +86,14 @@ bool GameObject::toDestroy() const noexcept
 	return _toDestroy;
 }
 
+std::string GameObject::asString() const noexcept
+{
+	std::ostringstream os;
+
+	os << "{ \"" << _name << "\" " << getPosition() << " }";
+	return os.str();
+}
+
 void GameObject::destroy() noexcept
 {
 	_toDestroy = true;
@@ -92,6 +101,6 @@ void GameObject::destroy() noexcept
 
 void GameObject::errorLog(const std::string &str) noexcept
 {
-	std::cerr << "Error: " << *this << ": " << str << std::endl;
+	std::cerr << "Error: " << asString() << ": " << str << std::endl;
 }
 } // namespace sfs

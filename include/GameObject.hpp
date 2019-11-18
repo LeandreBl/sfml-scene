@@ -8,6 +8,25 @@
 #include "Scene.hpp"
 #include "IComponent.hpp"
 
+template <typename T> T &operator<<(T &os, const sf::Vector2f &v)
+{
+	os << '(' << v.x << ", " << v.y << ')';
+	return os;
+}
+
+template <typename T> T &operator<<(T &os, const sf::Vector3f &v) noexcept
+{
+	os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
+	return os;
+}
+
+template <typename T, typename B> T &operator<<(T &os, const sf::Rect<B> &rect) noexcept
+{
+	os << "[(" << rect.top << ", " << rect.left << "), (" << rect.width << ", " << rect.height
+	   << ")]";
+	return os;
+}
+
 namespace sfs {
 class GameObject : public sf::Transformable {
       public:
@@ -74,6 +93,8 @@ class GameObject : public sf::Transformable {
 	std::vector<sf::Event::EventType> &getSubscribedEvents() noexcept;
 
 	bool toDestroy() const noexcept;
+
+	std::string asString() const noexcept;
 
       protected:
 	void addChild(Scene &scene, std::unique_ptr<GameObject> &object) noexcept;
