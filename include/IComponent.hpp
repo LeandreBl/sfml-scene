@@ -3,13 +3,11 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-namespace sfs
-{
+namespace sfs {
 class Scene;
 class GameObject;
 
-class IComponent
-{
+class IComponent {
       public:
 	virtual ~IComponent() noexcept = default;
 	virtual void start(Scene &, GameObject &) noexcept {};
@@ -23,7 +21,8 @@ class IComponent
 	{
 		return _toDestroy;
 	}
-	protected:
+
+      protected:
 	bool _toDestroy = false;
 };
 } // namespace sfs
