@@ -4,6 +4,7 @@
 #include "WScene.hpp"
 
 namespace sfs {
+static uint64_t id = 0;
 GameObject::GameObject(const sf::Vector2f &position, const std::string &name) noexcept
 	: sf::Transformable()
 	, _name(name)
@@ -13,6 +14,7 @@ GameObject::GameObject(const sf::Vector2f &position, const std::string &name) no
 	, _childs()
 	, _components()
 	, _layer(GameObject::defaultLayer)
+	, _id(id++)
 	, _toDestroy(false)
 {
 	setPosition(position);
@@ -92,6 +94,11 @@ std::string GameObject::asString() const noexcept
 
 	os << "{ \"" << _name << "\" " << getPosition() << " }";
 	return os.str();
+}
+
+uint64_t GameObject::getId() const noexcept
+{
+	return _id;
 }
 
 void GameObject::destroy() noexcept

@@ -95,6 +95,7 @@ class GameObject : public sf::Transformable {
 	bool toDestroy() const noexcept;
 
 	std::string asString() const noexcept;
+	uint64_t getId() const noexcept;
 
       protected:
 	void addChild(Scene &scene, std::unique_ptr<GameObject> &object) noexcept;
@@ -105,6 +106,7 @@ class GameObject : public sf::Transformable {
 	std::vector<GameObject *> _childs;
 	std::vector<std::unique_ptr<IComponent>> _components;
 	uint32_t _layer;
+	const uint64_t _id;
 	bool _toDestroy;
 };
 } // namespace sfs
