@@ -13,13 +13,11 @@
 
 #include "Clock.hpp"
 
-namespace sfs
-{
+namespace sfs {
 class GameObject;
 class IComponent;
 
-class Scene
-{
+class Scene {
       public:
 	Scene(const std::string &name, uint32_t fps) noexcept;
 	virtual ~Scene() = default;
@@ -27,8 +25,7 @@ class Scene
 	void run() noexcept;
 	void close() noexcept;
 
-	template <typename T, typename... Args>
-	T &addGameObject(Args &&... args) noexcept
+	template <typename T, typename... Args> T &addGameObject(Args &&... args) noexcept
 	{
 		std::unique_ptr<T> go = std::make_unique<T>(args...);
 		auto &i = *go.get();
@@ -37,8 +34,7 @@ class Scene
 		return i;
 	}
 
-	std::vector<GameObject *> getGameObjects(const std::string &name) const
-		noexcept;
+	std::vector<GameObject *> getGameObjects(const std::string &name) const noexcept;
 	std::vector<GameObject *> getGameObjects(int tag) const noexcept;
 	template <typename T> std::vector<T *> getGameObjects() const noexcept
 	{
@@ -72,13 +68,10 @@ class Scene
 	const sf::Font *getAssetFont(const std::string &name) noexcept;
 	const sf::Texture *getAssetTexture(const std::string &name) noexcept;
 	const sf::Image *getAssetImage(const std::string &name) noexcept;
-	const sf::SoundBuffer *
-	getAssetSoundBuffer(const std::string &name) noexcept;
+	const sf::SoundBuffer *getAssetSoundBuffer(const std::string &name) noexcept;
 
-	virtual void subscribe(GameObject &object,
-			       const sf::Event::EventType &type) noexcept;
-	virtual void unsubscribe(GameObject &object,
-				 const sf::Event::EventType &type) noexcept;
+	virtual void subscribe(GameObject &object, const sf::Event::EventType &type) noexcept;
+	virtual void unsubscribe(GameObject &object, const sf::Event::EventType &type) noexcept;
 
 	virtual sf::RenderWindow *getVideoHandle() noexcept;
 
