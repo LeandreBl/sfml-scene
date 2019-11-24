@@ -37,6 +37,7 @@ class Scene {
 
 	std::vector<GameObject *> getGameObjects(const std::string &name) const noexcept;
 	std::vector<GameObject *> getGameObjects(int tag) const noexcept;
+	GameObject *getGameObject(uint64_t id) const noexcept;
 	template <typename T> std::vector<T *> getGameObjects() const noexcept
 	{
 		std::vector<T *> v;

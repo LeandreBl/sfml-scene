@@ -116,7 +116,7 @@ std::vector<GameObject *> Scene::getGameObjects(const std::string &name) const n
 
 	for (auto &&i : _layeredObjects)
 		for (auto &&go : i)
-			if (go.get()->name() == name)
+			if (go->name() == name)
 				v.push_back(go.get());
 
 	for (auto &&i : _toAdd)
@@ -125,13 +125,26 @@ std::vector<GameObject *> Scene::getGameObjects(const std::string &name) const n
 	return v;
 }
 
+GameObject *Scene::getGameObject(uint64_t id) const noexcept
+{
+	for (auto &&i : _layeredObjects)
+		for (auto &&go : i)
+			if (go->getId() == id)
+				return go.get();
+
+	for (auto &&go : _toAdd)
+		if (go->getId() == id)
+			return go.get();
+	return nullptr;
+}
+
 std::vector<GameObject *> Scene::getGameObjects(int tag) const noexcept
 {
 	std::vector<GameObject *> v;
 
 	for (auto &&i : _layeredObjects)
 		for (auto &&go : i)
-			if (go.get()->tag() == tag)
+			if (go->tag() == tag)
 				v.push_back(go.get());
 
 	for (auto &&i : _toAdd)
