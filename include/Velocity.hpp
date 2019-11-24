@@ -5,47 +5,22 @@
 #include "IComponent.hpp"
 #include "GameObject.hpp"
 
-namespace sfs
-{
-class Velocity : public sfs::IComponent
-{
+namespace sfs {
+class Velocity : public sfs::IComponent {
       public:
-	Velocity(const sf::Vector2f &speed = sf::Vector2f(0, 0),
-		 const sf::Vector2f &accel = sf::Vector2f(1, 1)) noexcept
-	    : _speed(speed), _accel(accel){};
-	void addAcceleration(const sf::Vector2f &add) noexcept
+	Velocity(const sf::Vector2f &speedv = sf::Vector2f(0, 0),
+		 const sf::Vector2f &accelv = sf::Vector2f(1, 1)) noexcept
+		: speed(speedv)
+		, acceleration(accelv)
 	{
-		_accel += add;
 	}
-	void setAcceleration(const sf::Vector2f &accel) noexcept
+	void update(Scene &scene, GameObject &go) noexcept
 	{
-		_accel = accel;
+		go.move(this->speed * scene.deltaTime());
+		this->speed.x *= this->acceleration.x;
+		this->speed.y *= this->acceleration.y;
 	}
-	sf::Vector2f getAcceleration() const noexcept
-	{
-		return _accel;
-	}
-	void addSpeed(const sf::Vector2f &add) noexcept
-	{
-		_speed += add;
-	}
-	void setSpeed(const sf::Vector2f &speed) noexcept
-	{
-		_speed = speed;
-	}
-	sf::Vector2f getSpeed() const noexcept
-	{
-		return _speed;
-	}
-	void update(sfs::Scene &scene, GameObject &go) noexcept
-	{
-		_speed.x *= _accel.x;
-		_speed.y *= _accel.y;
-		go.move(_speed * scene.deltaTime());
-	}
-
-      protected:
-	sf::Vector2f _speed;
-	sf::Vector2f _accel;
+	sf::Vector2f speed;
+	sf::Vector2f acceleration;
 };
 } // namespace sfs

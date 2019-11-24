@@ -24,6 +24,7 @@ class Scene {
 
 	void run() noexcept;
 	void close() noexcept;
+	void clear() noexcept;
 
 	template <typename T, typename... Args> T &addGameObject(Args &&... args) noexcept
 	{

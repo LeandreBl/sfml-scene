@@ -3,15 +3,31 @@
 #include "Scene.hpp"
 #include "GameObject.hpp"
 
-namespace sfs
-{
+namespace sfs {
 Scene::Scene(const std::string &name, uint32_t fps) noexcept
-    : _name(name), _clock(fps), _layeredObjects(), _toAdd(), _fonts(),
-      _images(), _textures(), _soundBuffers(), _running(false)
+	: _name(name)
+	, _clock(fps)
+	, _layeredObjects()
+	, _toAdd()
+	, _fonts()
+	, _images()
+	, _textures()
+	, _soundBuffers()
+	, _running(false)
 {
 	_layeredObjects.resize(10);
 	for (auto &v : _layeredObjects)
 		v.reserve(64);
+}
+
+void Scene::clear() noexcept
+{
+	_layeredObjects.clear();
+	_toAdd.clear();
+	_fonts.clear();
+	_images.clear();
+	_textures.clear();
+	_soundBuffers.clear();
 }
 
 void Scene::insertToAddObjects() noexcept
@@ -60,8 +76,7 @@ void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 		}
 		auto &components = go.getComponents();
 		go.update(*this);
-		for (auto cit = components.begin(); cit != components.end();
-		     ++cit) {
+		for (auto cit = components.begin(); cit != components.end(); ++cit) {
 			auto &c = *cit->get();
 			if (c.toDestroy()) {
 				cit = components.erase(cit);
@@ -81,8 +96,7 @@ void Scene::run() noexcept
 	while (_running) {
 		auto t1 = _clock.getNative();
 		insertToAddObjects();
-		for (auto rit = _layeredObjects.rbegin();
-		     rit != _layeredObjects.rend(); ++rit) {
+		for (auto rit = _layeredObjects.rbegin(); rit != _layeredObjects.rend(); ++rit) {
 			deleteUpdate(*rit);
 		}
 		_clock.refreshDeltaTime();
@@ -96,8 +110,7 @@ void Scene::close() noexcept
 	_running = false;
 }
 
-std::vector<GameObject *> Scene::getGameObjects(const std::string &name) const
-	noexcept
+std::vector<GameObject *> Scene::getGameObjects(const std::string &name) const noexcept
 {
 	std::vector<GameObject *> v;
 
@@ -167,8 +180,7 @@ uint32_t Scene::getRealFramerate() const noexcept
 }
 
 template <typename T>
-const T *getAsset(const std::string &name,
-		  std::unordered_map<std::string, T> &map)
+const T *getAsset(const std::string &name, std::unordered_map<std::string, T> &map)
 {
 	const auto &asset = map.find(name);
 
@@ -178,8 +190,7 @@ const T *getAsset(const std::string &name,
 		T item;
 		if (item.loadFromFile(name) == false)
 			return NULL;
-		auto p = map.insert(map.begin(),
-				    std::pair<std::string, T>(name, item));
+		auto p = map.insert(map.begin(), std::pair<std::string, T>(name, item));
 		return &p->second;
 	}
 	return &asset->second;
@@ -200,8 +211,7 @@ const sf::Image *Scene::getAssetImage(const std::string &name) noexcept
 	return getAsset<sf::Image>(name, _images);
 }
 
-const sf::SoundBuffer *
-Scene::getAssetSoundBuffer(const std::string &name) noexcept
+const sf::SoundBuffer *Scene::getAssetSoundBuffer(const std::string &name) noexcept
 {
 	return getAsset<sf::SoundBuffer>(name, _soundBuffers);
 }
