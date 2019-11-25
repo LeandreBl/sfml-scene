@@ -25,6 +25,7 @@ class Scene {
 	void run() noexcept;
 	void close() noexcept;
 	void clear() noexcept;
+	void clearAssets() noexcept;
 
 	template <typename T, typename... Args> T &addGameObject(Args &&... args) noexcept
 	{
@@ -90,6 +91,5 @@ class Scene {
 	std::unordered_map<std::string, sf::Texture> _textures;
 	std::unordered_map<std::string, sf::SoundBuffer> _soundBuffers;
 	bool _running;
-	bool _toClear;
 };
 } // namespace sfs

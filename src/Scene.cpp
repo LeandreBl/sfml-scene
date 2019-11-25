@@ -14,17 +14,14 @@ Scene::Scene(const std::string &name, uint32_t fps) noexcept
 	, _textures()
 	, _soundBuffers()
 	, _running(false)
-	, _toClear(false)
 {
 	_layeredObjects.resize(10);
 	for (auto &v : _layeredObjects)
 		v.reserve(64);
 }
 
-void Scene::forceClear() noexcept
+void Scene::clearAssets() noexcept
 {
-	_layeredObjects.clear();
-	_toAdd.clear();
 	_fonts.clear();
 	_images.clear();
 	_textures.clear();
@@ -33,7 +30,17 @@ void Scene::forceClear() noexcept
 
 void Scene::clear() noexcept
 {
-	_toClear = true;
+	if (_running) {
+		for (auto &&v : _layeredObjects)
+			for (auto &&go : v)
+				go->destroy();
+		for (auto &&go : _toAdd)
+			go->destroy();
+	}
+	else {
+		_layeredObjects.clear();
+		_toAdd.clear();
+	}
 }
 
 void Scene::insertToAddObjects() noexcept
@@ -104,10 +111,6 @@ void Scene::run() noexcept
 		insertToAddObjects();
 		for (auto rit = _layeredObjects.rbegin(); rit != _layeredObjects.rend(); ++rit) {
 			deleteUpdate(*rit);
-		}
-		if (_toClear == true) {
-			forceClear();
-			_toClear = false;
 		}
 		_clock.refreshDeltaTime();
 		auto t2 = _clock.getNative();
