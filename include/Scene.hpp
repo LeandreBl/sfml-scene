@@ -78,6 +78,7 @@ class Scene {
 	virtual sf::RenderWindow *getVideoHandle() noexcept;
 
       protected:
+	void forceClear() noexcept;
 	void insertToAddObjects() noexcept;
 	void deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept;
 	std::string _name;
@@ -89,5 +90,6 @@ class Scene {
 	std::unordered_map<std::string, sf::Texture> _textures;
 	std::unordered_map<std::string, sf::SoundBuffer> _soundBuffers;
 	bool _running;
+	bool _toClear;
 };
 } // namespace sfs

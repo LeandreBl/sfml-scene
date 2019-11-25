@@ -14,13 +14,14 @@ Scene::Scene(const std::string &name, uint32_t fps) noexcept
 	, _textures()
 	, _soundBuffers()
 	, _running(false)
+	, _toClear(false)
 {
 	_layeredObjects.resize(10);
 	for (auto &v : _layeredObjects)
 		v.reserve(64);
 }
 
-void Scene::clear() noexcept
+void Scene::forceClear() noexcept
 {
 	_layeredObjects.clear();
 	_toAdd.clear();
@@ -28,6 +29,11 @@ void Scene::clear() noexcept
 	_images.clear();
 	_textures.clear();
 	_soundBuffers.clear();
+}
+
+void Scene::clear() noexcept
+{
+	_toClear = true;
 }
 
 void Scene::insertToAddObjects() noexcept
@@ -98,6 +104,10 @@ void Scene::run() noexcept
 		insertToAddObjects();
 		for (auto rit = _layeredObjects.rbegin(); rit != _layeredObjects.rend(); ++rit) {
 			deleteUpdate(*rit);
+		}
+		if (_toClear == true) {
+			forceClear();
+			_toClear = false;
 		}
 		_clock.refreshDeltaTime();
 		auto t2 = _clock.getNative();
