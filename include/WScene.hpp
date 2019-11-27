@@ -2,25 +2,20 @@
 
 #include "Scene.hpp"
 
-namespace sfs
-{
+namespace sfs {
 
 class UI;
 
-class WScene : public Scene
-{
+class WScene : public Scene {
       public:
 	WScene(const std::string &name, uint32_t fps) noexcept;
 	sf::RenderWindow *getWindow() noexcept;
-	void subscribe(GameObject &object,
-		       const sf::Event::EventType &type) noexcept;
-	void unsubscribe(GameObject &object,
-			 const sf::Event::EventType &type) noexcept;
+	void subscribe(GameObject &object, const sf::Event::EventType &type) noexcept;
+	void unsubscribe(GameObject &object, const sf::Event::EventType &type) noexcept;
 	void framerate(uint32_t framerate) noexcept;
 	void run() noexcept;
 
       protected:
-	void eraseParentChilds(GameObject &go) noexcept;
 	void deleteGameObjectEvents(GameObject *object) noexcept;
 	void deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept;
 	void callSubscribedEvents() noexcept;

@@ -104,6 +104,9 @@ uint64_t GameObject::getId() const noexcept
 void GameObject::destroy() noexcept
 {
 	_toDestroy = true;
+	for (auto &&i : _childs)
+		i->destroy();
+	onDestroy();
 }
 
 void GameObject::errorLog(const std::string &str) noexcept

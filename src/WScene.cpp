@@ -1,10 +1,11 @@
 #include "WScene.hpp"
 #include "GameObject.hpp"
 
-namespace sfs
-{
+namespace sfs {
 WScene::WScene(const std::string &name, uint32_t fps) noexcept
-    : Scene(name, fps), _window(), _subscribedEvents()
+	: Scene(name, fps)
+	, _window()
+	, _subscribedEvents()
 {
 	auto &v = sf::VideoMode::getFullscreenModes();
 
@@ -32,29 +33,11 @@ void WScene::deleteGameObjectEvents(GameObject *object) noexcept
 	v.clear();
 }
 
-void WScene::eraseParentChilds(GameObject &go) noexcept
-{
-	auto parent = go.parent();
-
-	if (parent == nullptr)
-		return;
-	auto &childs = parent->getChilds();
-	for (auto it = childs.begin(); it != childs.end(); ++it) {
-		if ((*it)->toDestroy() == true) {
-			deleteGameObjectEvents(*it);
-			it = childs.erase(it);
-			if (it-- == childs.end())
-				return;
-		}
-	}
-}
-
 void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 {
 	for (auto it = v.begin(); it != v.end(); ++it) {
 		auto &go = *it->get();
 		if (go.toDestroy()) {
-			eraseParentChilds(go);
 			deleteGameObjectEvents(it->get());
 			it = v.erase(it);
 			if (it-- == v.end())
@@ -63,8 +46,7 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 		}
 		auto &components = go.getComponents();
 		go.update(*this);
-		for (auto cit = components.begin(); cit != components.end();
-		     ++cit) {
+		for (auto cit = components.begin(); cit != components.end(); ++cit) {
 			auto &c = *cit->get();
 			if (c.toDestroy()) {
 				cit = components.erase(cit);
@@ -86,8 +68,7 @@ void WScene::run() noexcept
 		_window.clear();
 		callSubscribedEvents();
 		insertToAddObjects();
-		for (auto rit = _layeredObjects.rbegin();
-		     rit != _layeredObjects.rend(); ++rit) {
+		for (auto rit = _layeredObjects.rbegin(); rit != _layeredObjects.rend(); ++rit) {
 			deleteUpdate(*rit);
 		}
 		_clock.refreshDeltaTime();
@@ -107,8 +88,7 @@ void WScene::framerate(uint32_t framerate) noexcept
 	_window.setFramerateLimit(framerate);
 }
 
-void WScene::subscribe(GameObject &object,
-		       const sf::Event::EventType &type) noexcept
+void WScene::subscribe(GameObject &object, const sf::Event::EventType &type) noexcept
 {
 	for (auto &&i : _subscribedEvents[type])
 		if (i == &object)
@@ -117,11 +97,9 @@ void WScene::subscribe(GameObject &object,
 	object.getSubscribedEvents().push_back(type);
 }
 
-void WScene::unsubscribe(GameObject &object,
-			 const sf::Event::EventType &type) noexcept
+void WScene::unsubscribe(GameObject &object, const sf::Event::EventType &type) noexcept
 {
-	for (auto it = _subscribedEvents[type].begin();
-	     it != _subscribedEvents[type].end(); ++it) {
+	for (auto it = _subscribedEvents[type].begin(); it != _subscribedEvents[type].end(); ++it) {
 		if (*it == &object) {
 			_subscribedEvents[type].erase(it);
 			auto &sv = object.getSubscribedEvents();

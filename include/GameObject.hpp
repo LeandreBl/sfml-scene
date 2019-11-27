@@ -43,6 +43,7 @@ class GameObject : public sf::Transformable {
 	virtual void start(Scene &) noexcept {};
 	virtual void update(Scene &) noexcept {};
 	virtual void onEvent(Scene &, const sf::Event &){};
+	virtual void onDestroy() noexcept {};
 
 	void destroy() noexcept;
 

@@ -60,28 +60,11 @@ void Scene::insertToAddObjects() noexcept
 	}
 }
 
-static void eraseParentChilds(GameObject &go)
-{
-	auto parent = go.parent();
-
-	if (parent != nullptr) {
-		auto childs = parent->getChilds();
-		for (auto it = childs.begin(); it != childs.end(); ++it) {
-			if ((*it)->toDestroy() == true)
-				(*it)->parent(nullptr);
-			it = childs.erase(it);
-			if (it-- == childs.end())
-				break;
-		}
-	}
-}
-
 void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 {
 	for (auto it = v.begin(); it != v.end(); ++it) {
 		auto &go = *it->get();
 		if (go.toDestroy()) {
-			eraseParentChilds(go);
 			it = v.erase(it);
 			if (it-- == v.end())
 				return;
