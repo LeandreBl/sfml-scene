@@ -1,12 +1,13 @@
 #include "Popup.hpp"
 #include "Colors.hpp"
 
-namespace sfs
-{
+namespace sfs {
 Popup::Popup(const sf::Font &font, const sf::Vector2f &position) noexcept
-    : UI(position, "Popup"), _box(addComponent<Rectangle>()),
-      _text(addComponent<Text>(font, "", sf::Color::Black)), _queue(),
-      _elapsed(0.f)
+	: UI(position, "Popup")
+	, _box(addComponent<Rectangle>())
+	, _text(addComponent<Text>(font, "", sf::Color::Black))
+	, _queue()
+	, _elapsed(0.f)
 {
 }
 
@@ -20,20 +21,25 @@ void Popup::updateString() noexcept
 	_box.setSize(sf::Vector2f(gapx, gapy));
 	_box.setOffset(sf::Vector2f(-rect.width, 0));
 	auto boxrect = _box.getLocalBounds();
-	_text.setOffset(
-		sf::Vector2f((boxrect.width - rect.width) / 2 - rect.left,
-			     (boxrect.height - rect.height) / 2 - rect.top)
-		+ _box.getOffset());
+	_text.setOffset(sf::Vector2f((boxrect.width - rect.width) / 2 - rect.left,
+				     (boxrect.height - rect.height) / 2 - rect.top)
+			+ _box.getOffset());
 }
 
 sf::Uint8 Popup::getAlpha() const noexcept
 {
 	if (_elapsed <= _queue.front().second / 3) {
 		return _elapsed * 255 / (_queue.front().second / 3);
-	} else if (_elapsed <= _queue.front().second * 2 / 3) {
+	}
+	else if (_elapsed <= _queue.front().second * 2 / 3) {
 		return 255;
 	}
 	return 255 - (_elapsed * 255 / (_queue.front().second / 3));
+}
+
+sf::FloatRect Popup::getGlobalBounds() noexcept
+{
+	return _text.getGlobalBounds();
 }
 
 void Popup::clean() noexcept
@@ -54,7 +60,8 @@ void Popup::update(Scene &scene) noexcept
 			_elapsed = 0.f;
 			if (_queue.size() > 0) {
 				updateString();
-			} else {
+			}
+			else {
 				Popup::clean();
 				return;
 			}

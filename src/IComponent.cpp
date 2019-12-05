@@ -15,6 +15,7 @@ uint64_t IComponent::getId() const noexcept
 void IComponent::destroy() noexcept
 {
 	_toDestroy = true;
+	onDestroy();
 }
 
 bool IComponent::toDestroy() const noexcept

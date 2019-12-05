@@ -20,14 +20,6 @@ GameObject::GameObject(const sf::Vector2f &position, const std::string &name) no
 	setPosition(position);
 }
 
-GameObject::~GameObject()
-{
-	for (auto &&i : _childs) {
-		i->parent(nullptr);
-		i->destroy();
-	}
-}
-
 std::vector<GameObject *> &GameObject::getChilds() noexcept
 {
 	return _childs;

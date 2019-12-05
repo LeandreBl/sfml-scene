@@ -39,10 +39,10 @@ class GameObject : public sf::Transformable {
 
 	void errorLog(const std::string &str) noexcept;
 
-	virtual ~GameObject();
+	virtual ~GameObject() = default;
 	virtual void start(Scene &) noexcept {};
 	virtual void update(Scene &) noexcept {};
-	virtual void onEvent(Scene &, const sf::Event &){};
+	virtual void onEvent(Scene &, const sf::Event &) noexcept {};
 	virtual void onDestroy() noexcept {};
 
 	void destroy() noexcept;

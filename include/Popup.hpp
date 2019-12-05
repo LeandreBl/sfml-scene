@@ -4,11 +4,9 @@
 #include "UI.hpp"
 #include "BasicShape.hpp"
 
-namespace sfs
-{
-class Popup : public UI
-{
-	public:
+namespace sfs {
+class Popup : public UI {
+      public:
 	Popup(const sf::Font &font, const sf::Vector2f &position = sf::Vector2f(0, 0)) noexcept;
 	void setTexture(const sf::Texture &texture) noexcept;
 	void setCharacterSize(uint32_t size) noexcept;
@@ -18,8 +16,9 @@ class Popup : public UI
 	void clear() noexcept;
 	void pop(size_t n = 1) noexcept;
 	void update(Scene &scene) noexcept;
-        sf::FloatRect getGlobalBounds() noexcept {return _text.getGlobalBounds();};
-	protected:
+	sf::FloatRect getGlobalBounds() noexcept;
+
+      protected:
 	void clean() noexcept;
 	sf::Uint8 getAlpha() const noexcept;
 	void updateString() noexcept;

@@ -14,6 +14,7 @@ class IComponent {
 	virtual void start(Scene &, GameObject &) noexcept {};
 	virtual void display(sf::RenderWindow &) noexcept {};
 	virtual void update(Scene &, GameObject &) noexcept {};
+	virtual void onDestroy() noexcept {};
 	uint64_t getId() const noexcept;
 	void destroy() noexcept;
 	bool toDestroy() const noexcept;
