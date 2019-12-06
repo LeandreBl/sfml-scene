@@ -20,7 +20,7 @@ GameObject::GameObject(const sf::Vector2f &position, const std::string &name) no
 	setPosition(position);
 }
 
-std::vector<GameObject *> &GameObject::getChilds() noexcept
+std::vector<GameObject *> GameObject::getChilds() noexcept
 {
 	return _childs;
 }

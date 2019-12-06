@@ -51,8 +51,6 @@ void Scene::insertToAddObjects() noexcept
 		if (_layeredObjects.size() < i->layer() + 1)
 			_layeredObjects.resize(i->layer() + 1);
 		_layeredObjects[i->layer()].push_back(std::move(i));
-		if (go->parent())
-			go->parent()->getChilds().push_back(go);
 		go->start(*this);
 		for (auto &&c : go->getComponents())
 			c->start(*this, *go);

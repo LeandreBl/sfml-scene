@@ -51,13 +51,22 @@ class GameObject : public sf::Transformable {
 	{
 		auto &go = scene.addGameObject<T>(args...);
 		go.parent(this);
-		std::cout << "child: " << (void *)&go << std::endl;
-		_childs.emplace_back(&go);
+		_childs.push_back(&go);
 		return go;
 	}
 
-	template <typename T> std::vector<T *> getChilds() noexcept;
-	std::vector<GameObject *> &getChilds() noexcept;
+	template <typename T> std::vector<T *> getChilds() noexcept
+	{
+		std::vector<T *> v;
+
+		for (auto &&i : _childs) {
+			auto *p = dynamic_cast<T *>(i);
+			if (p != nullptr)
+				v.push_back(p);
+		}
+		return v;
+	}
+	std::vector<GameObject *> getChilds() noexcept;
 
 	template <typename T, typename... Args> T &addComponent(Args &&... args) noexcept
 	{
