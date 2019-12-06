@@ -95,10 +95,19 @@ uint64_t GameObject::getId() const noexcept
 
 void GameObject::destroy() noexcept
 {
+	if (_toDestroy == true)
+		return;
 	_toDestroy = true;
-	for (auto &&i : _childs)
-		i->destroy();
 	onDestroy();
+	if (parent() != nullptr) {
+		_parent->_childs.erase(
+			std::remove(_parent->_childs.begin(), _parent->_childs.end(), this));
+		parent(nullptr);
+	}
+	while (!_childs.empty()) {
+		auto &p = _childs.front();
+		p->destroy();
+	}
 }
 
 void GameObject::errorLog(const std::string &str) noexcept

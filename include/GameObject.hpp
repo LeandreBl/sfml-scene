@@ -51,6 +51,8 @@ class GameObject : public sf::Transformable {
 	{
 		auto &go = scene.addGameObject<T>(args...);
 		go.parent(this);
+		std::cout << "child: " << (void *)&go << std::endl;
+		_childs.emplace_back(&go);
 		return go;
 	}
 

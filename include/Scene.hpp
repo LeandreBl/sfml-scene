@@ -30,10 +30,10 @@ class Scene {
 	template <typename T, typename... Args> T &addGameObject(Args &&... args) noexcept
 	{
 		std::unique_ptr<T> go = std::make_unique<T>(args...);
-		auto &i = *go.get();
+		auto *p = go.get();
 
 		_toAdd.push_back(std::move(go));
-		return i;
+		return *p;
 	}
 
 	std::vector<GameObject *> getGameObjects(const std::string &name) const noexcept;
