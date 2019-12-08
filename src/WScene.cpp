@@ -13,6 +13,11 @@ WScene::WScene(const std::string &name, uint32_t fps) noexcept
 	_window.setFramerateLimit(fps);
 }
 
+void WScene::vSync(bool state) noexcept
+{
+	_window.setVerticalSyncEnabled(state);
+}
+
 void WScene::callSubscribedEvents() noexcept
 {
 	sf::Event event;

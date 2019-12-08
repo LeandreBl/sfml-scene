@@ -9,6 +9,7 @@ class UI;
 class WScene : public Scene {
       public:
 	WScene(const std::string &name, uint32_t fps) noexcept;
+	void vSync(bool state) noexcept;
 	sf::RenderWindow *getWindow() noexcept;
 	void subscribe(GameObject &object, const sf::Event::EventType &type) noexcept;
 	void unsubscribe(GameObject &object, const sf::Event::EventType &type) noexcept;
