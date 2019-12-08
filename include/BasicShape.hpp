@@ -101,8 +101,13 @@ class MultiSprite : public BasicShape<sf::Sprite>
 		for (auto &&i : container)
 			_frames.emplace_back(i);
 	}
-	void update(sfs::Scene &scene, sfs::GameObject &) noexcept
+	void start(sfs::Scene &scene, sfs::GameObject &) noexcept
 	{
+		this->setTextureRect(_frames[0]);
+	}
+	void update(sfs::Scene &scene, sfs::GameObject &go) noexcept
+	{
+		BasicShape<sf::Sprite>::update(scene, go);
 		float dt = scene.deltaTime();
 
 		_elapsed += dt;
