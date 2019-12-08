@@ -87,4 +87,35 @@ class Text : public BasicShape<sf::Text>
 		setFillColor(color);
 	}
 };
+
+class MultiSprite : public BasicShape<sf::Sprite>
+{
+	public:
+	template <typename T>
+	MultiSprite(const sf::Texture &texture, const T &container, float deltaTime = 1)
+		: _delta(deltaTime / container.size())
+		, _elapsed(0)
+		, _index(0)
+	{
+		for (auto &&i : container)
+			_frames.emplace_back(i);
+	}
+	void update(sfs::Scene &scene, sfs::GameObject &) noexcept
+	{
+		float dt = scene.deltaTime();
+
+		_elapsed += dt;
+		if (_elapsed >= _delta) {
+			_index = (_index + 1 == _frames.size()) ? 0 : _index + 1;
+			setTextureRect(_frames[_index]);
+			_elapsed = 0;
+		}
+	}
+	protected:
+		std::vector<sf::IntRect> _frames;
+		float _delta;
+		float _elapsed;
+		size_t _index;
+};
+
 } // namespace sfs
