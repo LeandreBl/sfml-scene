@@ -92,8 +92,9 @@ class MultiSprite : public BasicShape<sf::Sprite>
 {
 	public:
 	template <typename T>
-	MultiSprite(const sf::Texture &texture, const T &container, float deltaTime = 1)
-		: _delta(deltaTime / container.size())
+	MultiSprite(const sf::Texture &texture, const T &container, float deltaTime = 1, const sf::Vector2f &offset = sf::Vector2f(0, 0))
+		: BasicShape<sf::Sprite>(offset, texture)
+		, _delta(deltaTime / container.size())
 		, _elapsed(0)
 		, _index(0)
 	{
