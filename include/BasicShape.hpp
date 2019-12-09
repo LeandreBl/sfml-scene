@@ -5,15 +5,13 @@
 #include "IComponent.hpp"
 #include "GameObject.hpp"
 
-namespace sfs
-{
-template <typename DrawableShape>
-class BasicShape : public IComponent, public DrawableShape
-{
+namespace sfs {
+template <typename DrawableShape> class BasicShape : public IComponent, public DrawableShape {
       public:
 	template <typename... Args>
 	BasicShape(const sf::Vector2f &offset, Args &&... args)
-	    : DrawableShape(args...), _offset(offset)
+		: DrawableShape(args...)
+		, _offset(offset)
 	{
 	}
 
@@ -41,58 +39,52 @@ class BasicShape : public IComponent, public DrawableShape
 	sf::Vector2f _offset;
 };
 
-class Rectangle : public BasicShape<sf::RectangleShape>
-{
+class Rectangle : public BasicShape<sf::RectangleShape> {
       public:
 	Rectangle(const sf::Vector2f &offset = sf::Vector2f(0, 0),
 		  const sf::Vector2f &size = sf::Vector2f(0, 0),
 		  const sf::Color &color = sf::Color::White) noexcept
-	    : BasicShape<sf::RectangleShape>(offset, size)
+		: BasicShape<sf::RectangleShape>(offset, size)
 	{
 		setFillColor(color);
 	}
 };
 
-class Circle : public BasicShape<sf::CircleShape>
-{
+class Circle : public BasicShape<sf::CircleShape> {
       public:
-	Circle(const sf::Vector2f &offset = sf::Vector2f(0, 0),
-	       float radius = 0,
+	Circle(const sf::Vector2f &offset = sf::Vector2f(0, 0), float radius = 0,
 	       const sf::Color &color = sf::Color::White) noexcept
-	    : BasicShape<sf::CircleShape>(offset, radius)
+		: BasicShape<sf::CircleShape>(offset, radius)
 	{
 		setFillColor(color);
 	}
 };
 
-class Sprite : public BasicShape<sf::Sprite>
-{
+class Sprite : public BasicShape<sf::Sprite> {
       public:
 	Sprite(const sf::Texture &texture = sf::Texture(),
 	       const sf::Vector2f &offset = sf::Vector2f(0, 0)) noexcept
-	    : BasicShape<sf::Sprite>(offset, texture)
+		: BasicShape<sf::Sprite>(offset, texture)
 	{
 	}
 };
 
-class Text : public BasicShape<sf::Text>
-{
+class Text : public BasicShape<sf::Text> {
       public:
 	Text(const sf::Font &font, const std::string &text = "",
-	     const sf::Color &color = sf::Color::White,
-	     uint32_t characterSize = 32,
+	     const sf::Color &color = sf::Color::White, uint32_t characterSize = 32,
 	     const sf::Vector2f &offset = sf::Vector2f(0, 0)) noexcept
-	    : BasicShape<sf::Text>(offset, text, font, characterSize)
+		: BasicShape<sf::Text>(offset, text, font, characterSize)
 	{
 		setFillColor(color);
 	}
 };
 
-class MultiSprite : public BasicShape<sf::Sprite>
-{
-	public:
+class MultiSprite : public BasicShape<sf::Sprite> {
+      public:
 	template <typename T>
-	MultiSprite(const sf::Texture &texture, const T &container, float deltaTime = 1, const sf::Vector2f &offset = sf::Vector2f(0, 0))
+	MultiSprite(const sf::Texture &texture, const T &container, float deltaTime = 1,
+		    const sf::Vector2f &offset = sf::Vector2f(0, 0))
 		: BasicShape<sf::Sprite>(offset, texture)
 		, _delta(deltaTime / container.size())
 		, _elapsed(0)
@@ -108,6 +100,8 @@ class MultiSprite : public BasicShape<sf::Sprite>
 	void update(sfs::Scene &scene, sfs::GameObject &go) noexcept
 	{
 		BasicShape<sf::Sprite>::update(scene, go);
+		if (_frames.size() <= 1)
+			return;
 		float dt = scene.deltaTime();
 
 		_elapsed += dt;
@@ -117,11 +111,12 @@ class MultiSprite : public BasicShape<sf::Sprite>
 			_elapsed = 0;
 		}
 	}
-	protected:
-		std::vector<sf::IntRect> _frames;
-		float _delta;
-		float _elapsed;
-		size_t _index;
+
+      protected:
+	std::vector<sf::IntRect> _frames;
+	float _delta;
+	float _elapsed;
+	size_t _index;
 };
 
 } // namespace sfs
