@@ -101,7 +101,7 @@ class MultiSprite : public BasicShape<sf::Sprite>
 		for (auto &&i : container)
 			_frames.emplace_back(i);
 	}
-	void start(sfs::Scene &scene, sfs::GameObject &) noexcept
+	void start(sfs::Scene &, sfs::GameObject &) noexcept
 	{
 		this->setTextureRect(_frames[0]);
 	}
