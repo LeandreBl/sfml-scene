@@ -49,8 +49,9 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 				return;
 			continue;
 		}
-		auto &components = go.getComponents();
 		go.update(*this);
+		go.startPendingComponents(*this);
+		auto &components = go.getComponents();
 		for (auto cit = components.begin(); cit != components.end(); ++cit) {
 			auto &c = *cit->get();
 			if (c.toDestroy()) {

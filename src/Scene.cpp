@@ -52,8 +52,7 @@ void Scene::insertToAddObjects() noexcept
 			_layeredObjects.resize(i->layer() + 1);
 		_layeredObjects[i->layer()].push_back(std::move(i));
 		go->start(*this);
-		for (auto &&c : go->getComponents())
-			c->start(*this, *go);
+		go->startPendingComponents(*this);
 		_toAdd.pop_front();
 	}
 }
@@ -68,8 +67,9 @@ void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 				return;
 			continue;
 		}
-		auto &components = go.getComponents();
 		go.update(*this);
+		go.startPendingComponents(*this);
+		auto &components = go.getComponents();
 		for (auto cit = components.begin(); cit != components.end(); ++cit) {
 			auto &c = *cit->get();
 			if (c.toDestroy()) {
