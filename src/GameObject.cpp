@@ -12,6 +12,7 @@ GameObject::GameObject(const sf::Vector2f &position, const std::string &name) no
 	, _tag(0)
 	, _subscribedEvents()
 	, _childs()
+	, _componentsToAdd()
 	, _components()
 	, _layer(GameObject::defaultLayer)
 	, _id(id++)

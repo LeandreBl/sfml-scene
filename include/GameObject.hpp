@@ -74,7 +74,7 @@ class GameObject : public sf::Transformable {
 		std::unique_ptr<T> c = std::make_unique<T>(args...);
 		auto *p = c.get();
 
-		_componentsToAdd.push_back(std::move(c));
+		_componentsToAdd.push(std::move(c));
 		return *p;
 	}
 
