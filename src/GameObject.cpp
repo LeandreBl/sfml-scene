@@ -3,19 +3,11 @@
 #include "GameObject.hpp"
 #include "WScene.hpp"
 
-namespace sfs {
+namespace sfs
+{
 static uint64_t id = 0;
 GameObject::GameObject(const sf::Vector2f &position, const std::string &name) noexcept
-	: sf::Transformable()
-	, _name(name)
-	, _parent(nullptr)
-	, _tag(0)
-	, _subscribedEvents()
-	, _childs()
-	, _components()
-	, _layer(GameObject::defaultLayer)
-	, _id(id++)
-	, _toDestroy(false)
+	: sf::Transformable(), _name(name), _parent(nullptr), _tag(0), _subscribedEvents(), _childs(), _components(), _layer(GameObject::defaultLayer), _id(id++), _toDestroy(false)
 {
 	setPosition(position);
 }
@@ -99,12 +91,14 @@ void GameObject::destroy() noexcept
 		return;
 	_toDestroy = true;
 	onDestroy();
-	if (parent() != nullptr) {
+	if (parent() != nullptr)
+	{
 		_parent->_childs.erase(
 			std::remove(_parent->_childs.begin(), _parent->_childs.end(), this));
 		parent(nullptr);
 	}
-	while (!_childs.empty()) {
+	while (!_childs.empty())
+	{
 		auto &p = _childs.front();
 		p->destroy();
 	}
