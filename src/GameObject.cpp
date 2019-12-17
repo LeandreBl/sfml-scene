@@ -5,7 +5,7 @@
 
 namespace sfs {
 static uint64_t id = 0;
-GameObject::GameObject(const sf::Vector2f &position, const std::string &name) noexcept
+GameObject::GameObject(const std::string &name, const sf::Vector2f &position) noexcept
 	: sf::Transformable()
 	, _name(name)
 	, _parent(nullptr)
@@ -17,6 +17,7 @@ GameObject::GameObject(const sf::Vector2f &position, const std::string &name) no
 	, _layer(GameObject::defaultLayer)
 	, _id(id++)
 	, _toDestroy(false)
+	, _isActive(true)
 {
 	setPosition(position);
 }
@@ -92,6 +93,16 @@ std::string GameObject::asString() const noexcept
 uint64_t GameObject::getId() const noexcept
 {
 	return _id;
+}
+
+void GameObject::setActive(bool state) noexcept
+{
+	_isActive = state;
+}
+
+bool GameObject::isActive() const noexcept
+{
+	return _isActive;
 }
 
 void GameObject::destroy() noexcept

@@ -24,7 +24,8 @@ void WScene::callSubscribedEvents() noexcept
 
 	while (_window.pollEvent(event))
 		for (auto &i : _subscribedEvents[event.type])
-			i->onEvent(*this, event);
+			if (i->isActive())
+				i->onEvent(*this, event);
 }
 
 void WScene::deleteGameObjectEvents(GameObject *object) noexcept
@@ -49,6 +50,8 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 				return;
 			continue;
 		}
+		if (go.isActive() == false)
+			continue;
 		go.update(*this);
 		go.startPendingComponents(*this);
 		auto &components = go.getComponents();
@@ -60,8 +63,10 @@ void WScene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 					break;
 				continue;
 			}
-			c.update(*this, go);
-			c.display(_window);
+			else if (c.isActive()) {
+				c.update(*this, go);
+				c.display(_window);
+			}
 		}
 	}
 }

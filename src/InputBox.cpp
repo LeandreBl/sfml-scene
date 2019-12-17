@@ -1,15 +1,21 @@
 #include "InputBox.hpp"
 #include "Colors.hpp"
 
-namespace sfs
-{
+namespace sfs {
 InputBox::InputBox(const sf::Font &font, const sf::Vector2f &position,
 		   const std::string &placeholder, const sf::Color &color,
 		   uint32_t characterSize) noexcept
-    : UI(position, "InputBox"), _color(color), _charSize(characterSize),
-      _placeholder(placeholder), _content(""), _font(font),
-      _text(addComponent<Text>(font, placeholder, color, characterSize)),
-      _prevTime(0), _blink(true), _selected(false), _clicked(false)
+	: UI("InputBox", position)
+	, _color(color)
+	, _charSize(characterSize)
+	, _placeholder(placeholder)
+	, _content("")
+	, _font(font)
+	, _text(addComponent<Text>(font, placeholder, color, characterSize))
+	, _prevTime(0)
+	, _blink(true)
+	, _selected(false)
+	, _clicked(false)
 {
 }
 
@@ -33,14 +39,14 @@ void InputBox::update(Scene &scene) noexcept
 	if (_content.isEmpty() && !_selected) {
 		_text.setString(_placeholder);
 		_text.setFillColor(_color / 2);
-	} else {
+	}
+	else {
 		_text.setFillColor(_color);
 		if (_blink && _selected)
 			_content += '|';
 		_text.setString(_content);
 		if (_blink && _selected) {
-			_content.erase(_content.getSize() - 1,
-				       _content.getSize());
+			_content.erase(_content.getSize() - 1, _content.getSize());
 		}
 	}
 }
@@ -48,29 +54,30 @@ void InputBox::update(Scene &scene) noexcept
 void InputBox::onEvent(Scene &, const sf::Event &event) noexcept
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
-		if (_text.getGlobalBounds().contains(event.mouseButton.x,
-						     event.mouseButton.y)) {
+		if (_text.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
 			_clicked = true;
-		} else {
+		}
+		else {
 			_clicked = false;
 			_selected = false;
 		}
-	} else if (event.type == sf::Event::MouseButtonReleased
-		   && _text.getGlobalBounds().contains(event.mouseButton.x,
-						       event.mouseButton.y)
-		   && _clicked == true) {
+	}
+	else if (event.type == sf::Event::MouseButtonReleased
+		 && _text.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)
+		 && _clicked == true) {
 		_selected = true;
 	}
 	if (_selected == true) {
 		if (event.type == sf::Event::TextEntered) {
 			if (event.text.unicode == '\b') {
 				if (_content.getSize())
-					_content.erase(_content.getSize() - 1,
-						       _content.getSize());
-			} else if (event.text.unicode == '\r') {
+					_content.erase(_content.getSize() - 1, _content.getSize());
+			}
+			else if (event.text.unicode == '\r') {
 				_selected = false;
 				_clicked = false;
-			} else {
+			}
+			else {
 				_content += event.text.unicode;
 			}
 		}
@@ -89,6 +96,6 @@ void InputBox::string(const std::string &string) noexcept
 
 sf::FloatRect InputBox::getGlobalBounds() const noexcept
 {
-  return _text.getGlobalBounds();
+	return _text.getGlobalBounds();
 }
 } // namespace sfs

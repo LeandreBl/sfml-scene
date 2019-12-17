@@ -3,7 +3,7 @@
 
 namespace sfs {
 Popup::Popup(const sf::Font &font, const sf::Vector2f &position) noexcept
-	: UI(position, "Popup")
+	: UI("Popup", position)
 	, _box(addComponent<Rectangle>())
 	, _text(addComponent<Text>(font, "", sf::Color::Black))
 	, _queue()

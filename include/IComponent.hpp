@@ -18,9 +18,12 @@ class IComponent {
 	uint64_t getId() const noexcept;
 	void destroy() noexcept;
 	bool toDestroy() const noexcept;
+	bool isActive() const noexcept;
+	void setActive(bool state) noexcept;
 
       protected:
 	const uint64_t _id;
-	bool _toDestroy = false;
+	bool _toDestroy;
+	bool _isActive;
 };
 } // namespace sfs

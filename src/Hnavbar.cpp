@@ -9,7 +9,7 @@ constexpr float percentage = 0.85;
 
 Hnavbar::Hnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
 		 const sf::Color &color) noexcept
-	: UI(position)
+	: UI("Hnavbar", position)
 	, _background(addComponent<Rectangle>(sf::Vector2f(0, 0), size, color))
 	, _cursor(addComponent<Rectangle>(
 		  sf::Vector2f(size.y * (1 - percentage) / 2, size.y * (1 - percentage) / 2),

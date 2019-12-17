@@ -67,6 +67,8 @@ void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 				return;
 			continue;
 		}
+		if (go.isActive() == false)
+			continue;
 		go.update(*this);
 		go.startPendingComponents(*this);
 		auto &components = go.getComponents();
@@ -78,7 +80,9 @@ void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 					break;
 				continue;
 			}
-			c.update(*this, go);
+			else if (c.isActive()) {
+				c.update(*this, go);
+			}
 		}
 	}
 }

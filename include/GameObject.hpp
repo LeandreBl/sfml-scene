@@ -33,8 +33,8 @@ class GameObject : public sf::Transformable {
       public:
 	const uint32_t defaultLayer = 5;
 
-	GameObject(const sf::Vector2f &position = sf::Vector2f(0.f, 0.f),
-		   const std::string &name = "") noexcept;
+	GameObject(const std::string &name,
+		   const sf::Vector2f &position = sf::Vector2f(0.f, 0.f)) noexcept;
 	GameObject(const GameObject &) noexcept = default;
 	GameObject &operator=(GameObject &) noexcept = default;
 
@@ -47,6 +47,8 @@ class GameObject : public sf::Transformable {
 	virtual void onDestroy() noexcept {};
 
 	void destroy() noexcept;
+	void setActive(bool state) noexcept;
+	bool isActive() const noexcept;
 
 	template <typename T, typename... Args> T &addChild(Scene &scene, Args &&... args) noexcept
 	{
@@ -124,5 +126,6 @@ class GameObject : public sf::Transformable {
 	uint32_t _layer;
 	const uint64_t _id;
 	bool _toDestroy;
+	bool _isActive;
 };
 } // namespace sfs

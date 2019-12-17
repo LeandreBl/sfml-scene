@@ -9,7 +9,7 @@ constexpr float percentage = 0.85;
 
 Vnavbar::Vnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
 		 const sf::Color &color) noexcept
-	: UI(position)
+	: UI("Vnavbar", position)
 	, _background(addComponent<Rectangle>(sf::Vector2f(0, 0), size, color))
 	, _cursor(addComponent<Rectangle>(
 		  sf::Vector2f(size.x * (1 - percentage) / 2, size.x * (1 - percentage) / 2),
