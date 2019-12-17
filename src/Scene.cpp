@@ -51,8 +51,8 @@ void Scene::insertToAddObjects() noexcept
 		if (_layeredObjects.size() < i->layer() + 1)
 			_layeredObjects.resize(i->layer() + 1);
 		_layeredObjects[i->layer()].push_back(std::move(i));
-		go->start(*this);
-		go->startPendingComponents(*this);
+		go->start();
+		go->startPendingComponents();
 		_toAdd.pop_front();
 	}
 }
@@ -69,8 +69,8 @@ void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 		}
 		if (go.isActive() == false)
 			continue;
-		go.update(*this);
-		go.startPendingComponents(*this);
+		go.update();
+		go.startPendingComponents();
 		auto &components = go.getComponents();
 		for (auto cit = components.begin(); cit != components.end(); ++cit) {
 			auto &c = *cit->get();
@@ -81,7 +81,7 @@ void Scene::deleteUpdate(std::vector<std::unique_ptr<GameObject>> &v) noexcept
 				continue;
 			}
 			else if (c.isActive()) {
-				c.update(*this, go);
+				c.update(go);
 			}
 		}
 	}

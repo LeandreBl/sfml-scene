@@ -2,8 +2,8 @@
 #include "Colors.hpp"
 
 namespace sfs {
-Popup::Popup(const sf::Font &font, const sf::Vector2f &position) noexcept
-	: UI("Popup", position)
+Popup::Popup(Scene &scene, const sf::Font &font, const sf::Vector2f &position) noexcept
+	: UI(scene, "Popup", position)
 	, _box(addComponent<Rectangle>())
 	, _text(addComponent<Text>(font, "", sf::Color::Black))
 	, _queue()
@@ -51,10 +51,14 @@ void Popup::clean() noexcept
 	_elapsed = 0;
 }
 
-void Popup::update(Scene &scene) noexcept
+void Popup::start() noexcept
+{
+}
+
+void Popup::update() noexcept
 {
 	if (_queue.size() > 0) {
-		_elapsed += scene.deltaTime();
+		_elapsed += scene().deltaTime();
 		if (_elapsed >= _queue.front().second) {
 			_queue.pop();
 			_elapsed = 0.f;
@@ -74,6 +78,14 @@ void Popup::update(Scene &scene) noexcept
 		color.a = alpha;
 		_text.setFillColor(color);
 	}
+}
+
+void Popup::onEvent(const sf::Event &) noexcept
+{
+}
+
+void Popup::onDestroy() noexcept
+{
 }
 
 void Popup::setTexture(const sf::Texture &texture) noexcept

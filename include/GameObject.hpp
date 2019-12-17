@@ -31,31 +31,37 @@ template <typename T, typename B> T &operator<<(T &os, const sf::Rect<B> &rect) 
 namespace sfs {
 class GameObject : public sf::Transformable {
       public:
-	const uint32_t defaultLayer = 5;
-
-	GameObject(const std::string &name,
-		   const sf::Vector2f &position = sf::Vector2f(0.f, 0.f)) noexcept;
+	GameObject(Scene &scene, const std::string &name,
+		   const sf::Vector2f &position = sf::Vector2f(0.f, 0.f), uint32_t layer = 10,
+		   int tag = 0) noexcept;
 	GameObject(const GameObject &) noexcept = default;
 	GameObject &operator=(GameObject &) noexcept = default;
 
 	void errorLog(const std::string &str) noexcept;
 
+	Scene &scene() noexcept;
+
 	virtual ~GameObject() = default;
-	virtual void start(Scene &) noexcept {};
-	virtual void update(Scene &) noexcept {};
-	virtual void onEvent(Scene &, const sf::Event &) noexcept {};
-	virtual void onDestroy() noexcept {};
+	virtual void start() noexcept = 0;
+	virtual void update() noexcept = 0;
+	virtual void onEvent(const sf::Event &) noexcept = 0;
+	virtual void onDestroy() noexcept = 0;
 
 	void destroy() noexcept;
 	void setActive(bool state) noexcept;
 	bool isActive() const noexcept;
 
-	template <typename T, typename... Args> T &addChild(Scene &scene, Args &&... args) noexcept
+	template <typename T, typename... Args> T &addChild(Args &&... args) noexcept
 	{
-		auto &go = scene.addGameObject<T>(args...);
+		auto &go = _scene.addGameObject<T>(args...);
 		go.parent(this);
 		_childs.push_back(&go);
 		return go;
+	}
+
+	template <typename T, typename... Args> T &addGameObject(Args &&... args) noexcept
+	{
+		return scene().addGameObject(args...);
 	}
 
 	template <typename T> std::vector<T *> getChilds() noexcept
@@ -112,10 +118,14 @@ class GameObject : public sf::Transformable {
 	std::string asString() const noexcept;
 	uint64_t getId() const noexcept;
 
-	void startPendingComponents(Scene &scene) noexcept;
+	void subscribe(const sf::Event::EventType &type) noexcept;
+	void unsubscribe(const sf::Event::EventType &type) noexcept;
 
-      protected:
-	void addChild(Scene &scene, std::unique_ptr<GameObject> &object) noexcept;
+	void startPendingComponents() noexcept;
+
+      private:
+	void addChild(std::unique_ptr<GameObject> &object) noexcept;
+	Scene &_scene;
 	std::string _name;
 	GameObject *_parent;
 	int _tag;

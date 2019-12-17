@@ -7,9 +7,9 @@ namespace sfs {
 
 constexpr float percentage = 0.85;
 
-Vnavbar::Vnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
+Vnavbar::Vnavbar(Scene &scene, const sf::Vector2f &position, const sf::Vector2f &size,
 		 const sf::Color &color) noexcept
-	: UI("Vnavbar", position)
+	: UI(scene, "Vnavbar", position)
 	, _background(addComponent<Rectangle>(sf::Vector2f(0, 0), size, color))
 	, _cursor(addComponent<Rectangle>(
 		  sf::Vector2f(size.x * (1 - percentage) / 2, size.x * (1 - percentage) / 2),
@@ -26,11 +26,19 @@ sf::FloatRect Vnavbar::getGlobalBounds() const noexcept
 	return _background.getGlobalBounds();
 }
 
-void Vnavbar::start(Scene &scene) noexcept
+void Vnavbar::start() noexcept
 {
-	scene.subscribe(*this, sf::Event::MouseButtonPressed);
-	scene.subscribe(*this, sf::Event::MouseButtonReleased);
-	scene.subscribe(*this, sf::Event::MouseMoved);
+	subscribe(sf::Event::MouseButtonPressed);
+	subscribe(sf::Event::MouseButtonReleased);
+	subscribe(sf::Event::MouseMoved);
+}
+
+void Vnavbar::update() noexcept
+{
+}
+
+void Vnavbar::onDestroy() noexcept
+{
 }
 
 void Vnavbar::setCursorColor(int x, int y) noexcept
@@ -51,7 +59,7 @@ float Vnavbar::minOffset() const noexcept
 	return _background.getSize().x * (1 - percentage) / 2;
 }
 
-void Vnavbar::onEvent(Scene &, const sf::Event &event) noexcept
+void Vnavbar::onEvent(const sf::Event &event) noexcept
 {
 	if (event.type == sf::Event::MouseMoved) {
 		if (_clicked == false) {

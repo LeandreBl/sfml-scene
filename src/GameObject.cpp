@@ -5,16 +5,18 @@
 
 namespace sfs {
 static uint64_t id = 0;
-GameObject::GameObject(const std::string &name, const sf::Vector2f &position) noexcept
+GameObject::GameObject(Scene &scene, const std::string &name, const sf::Vector2f &position,
+		       uint32_t layer, int tag) noexcept
 	: sf::Transformable()
+	, _scene(scene)
 	, _name(name)
 	, _parent(nullptr)
-	, _tag(0)
+	, _tag(tag)
 	, _subscribedEvents()
 	, _childs()
 	, _componentsToAdd()
 	, _components()
-	, _layer(GameObject::defaultLayer)
+	, _layer(layer)
 	, _id(id++)
 	, _toDestroy(false)
 	, _isActive(true)
@@ -95,6 +97,16 @@ uint64_t GameObject::getId() const noexcept
 	return _id;
 }
 
+void GameObject::subscribe(const sf::Event::EventType &type) noexcept
+{
+	scene().subscribe(*this, type);
+}
+
+void GameObject::unsubscribe(const sf::Event::EventType &type) noexcept
+{
+	scene().unsubscribe(*this, type);
+}
+
 void GameObject::setActive(bool state) noexcept
 {
 	_isActive = state;
@@ -122,14 +134,19 @@ void GameObject::destroy() noexcept
 	}
 }
 
-void GameObject::startPendingComponents(Scene &scene) noexcept
+void GameObject::startPendingComponents() noexcept
 {
 	while (!_componentsToAdd.empty()) {
 		auto &c = _componentsToAdd.front();
-		c->start(scene, *this);
+		c->start(*this);
 		_components.push_back(std::move(c));
 		_componentsToAdd.pop();
 	}
+}
+
+Scene &GameObject::scene() noexcept
+{
+	return _scene;
 }
 
 void GameObject::errorLog(const std::string &str) noexcept

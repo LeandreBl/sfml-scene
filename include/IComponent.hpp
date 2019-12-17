@@ -11,10 +11,10 @@ class IComponent {
       public:
 	IComponent() noexcept;
 	virtual ~IComponent() noexcept = default;
-	virtual void start(Scene &, GameObject &) noexcept {};
+	virtual void start(GameObject &) noexcept = 0;
 	virtual void display(sf::RenderWindow &) noexcept {};
-	virtual void update(Scene &, GameObject &) noexcept {};
-	virtual void onDestroy() noexcept {};
+	virtual void update(GameObject &) noexcept = 0;
+	virtual void onDestroy() noexcept = 0;
 	uint64_t getId() const noexcept;
 	void destroy() noexcept;
 	bool toDestroy() const noexcept;

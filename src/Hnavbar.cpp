@@ -7,9 +7,9 @@ namespace sfs {
 
 constexpr float percentage = 0.85;
 
-Hnavbar::Hnavbar(const sf::Vector2f &position, const sf::Vector2f &size,
+Hnavbar::Hnavbar(Scene &scene, const sf::Vector2f &position, const sf::Vector2f &size,
 		 const sf::Color &color) noexcept
-	: UI("Hnavbar", position)
+	: UI(scene, "Hnavbar", position)
 	, _background(addComponent<Rectangle>(sf::Vector2f(0, 0), size, color))
 	, _cursor(addComponent<Rectangle>(
 		  sf::Vector2f(size.y * (1 - percentage) / 2, size.y * (1 - percentage) / 2),
@@ -26,11 +26,19 @@ sf::FloatRect Hnavbar::getGlobalBounds() const noexcept
 	return _background.getGlobalBounds();
 }
 
-void Hnavbar::start(Scene &scene) noexcept
+void Hnavbar::start() noexcept
 {
-	scene.subscribe(*this, sf::Event::MouseButtonPressed);
-	scene.subscribe(*this, sf::Event::MouseButtonReleased);
-	scene.subscribe(*this, sf::Event::MouseMoved);
+	subscribe(sf::Event::MouseButtonPressed);
+	subscribe(sf::Event::MouseButtonReleased);
+	subscribe(sf::Event::MouseMoved);
+}
+
+void Hnavbar::update() noexcept
+{
+}
+
+void Hnavbar::onDestroy() noexcept
+{
 }
 
 void Hnavbar::setCursorColor(int x, int y) noexcept
@@ -51,7 +59,7 @@ float Hnavbar::minOffset() const noexcept
 	return _background.getSize().y * (1 - percentage) / 2;
 }
 
-void Hnavbar::onEvent(Scene &, const sf::Event &event) noexcept
+void Hnavbar::onEvent(const sf::Event &event) noexcept
 {
 	if (event.type == sf::Event::MouseMoved) {
 		if (_clicked == false) {

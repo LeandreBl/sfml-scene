@@ -29,7 +29,7 @@ class Scene {
 
 	template <typename T, typename... Args> T &addGameObject(Args &&... args) noexcept
 	{
-		std::unique_ptr<T> go = std::make_unique<T>(args...);
+		std::unique_ptr<T> go = std::make_unique<T>(*this, args...);
 		auto *p = go.get();
 
 		_toAdd.push_back(std::move(go));

@@ -2,10 +2,10 @@
 #include "Button.hpp"
 
 namespace sfs {
-Button::Button(const sf::Texture &texture, const sf::Font &font, const sf::Vector2f &position,
-	       const std::function<void()> &onClick, const std::string &text,
-	       const sf::Color &color, uint32_t charSize) noexcept
-	: UI("Button", position)
+Button::Button(Scene &scene, const sf::Texture &texture, const sf::Font &font,
+	       const sf::Vector2f &position, const std::function<void()> &onClick,
+	       const std::string &text, const sf::Color &color, uint32_t charSize) noexcept
+	: UI(scene, "Button", position)
 	, _sprite(addComponent<Sprite>(texture))
 	, _text(addComponent<Text>(font, text, color, charSize))
 	, _onClick(std::move(onClick))
@@ -64,20 +64,24 @@ void Button::setRotate(const float &angle) noexcept
 	_sprite.setRotation(angle);
 }
 
-void Button::start(Scene &scene) noexcept
+void Button::start() noexcept
 {
-	scene.subscribe(*this, sf::Event::MouseButtonPressed);
-	scene.subscribe(*this, sf::Event::MouseButtonReleased);
-	scene.subscribe(*this, sf::Event::MouseMoved);
+	scene().subscribe(*this, sf::Event::MouseButtonPressed);
+	scene().subscribe(*this, sf::Event::MouseButtonReleased);
+	scene().subscribe(*this, sf::Event::MouseMoved);
 }
 
-void Button::update(Scene &) noexcept
+void Button::update() noexcept
 {
 	auto rect = _sprite.getGlobalBounds();
 	auto textRect = _text.getGlobalBounds();
 	auto textLRect = _text.getLocalBounds();
 	_text.setOffset(sf::Vector2f((rect.width - textRect.width) / 2.f - textLRect.left,
 				     (rect.height - textRect.height) / 2.f - textLRect.top));
+}
+
+void Button::onDestroy() noexcept
+{
 }
 
 static void setColor(sf::Sprite &sprite, float x, float y) noexcept
@@ -90,7 +94,7 @@ static void setColor(sf::Sprite &sprite, float x, float y) noexcept
 	}
 }
 
-void Button::onEvent(Scene &, const sf::Event &event) noexcept
+void Button::onEvent(const sf::Event &event) noexcept
 {
 	if (event.type == sf::Event::MouseButtonPressed
 	    && _sprite.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {

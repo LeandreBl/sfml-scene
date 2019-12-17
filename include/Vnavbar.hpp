@@ -3,18 +3,18 @@
 #include "UI.hpp"
 #include "BasicShape.hpp"
 
-namespace sfs
-{
-class Vnavbar : public UI
-{
+namespace sfs {
+class Vnavbar : public UI {
       public:
-	Vnavbar(const sf::Vector2f &position = sf::Vector2f(0, 0),
+	Vnavbar(Scene &scene, const sf::Vector2f &position = sf::Vector2f(0, 0),
 		const sf::Vector2f &size = sf::Vector2f(30, 100),
 		const sf::Color &color = sf::Color::White) noexcept;
 	Vnavbar(const Vnavbar &) noexcept = default;
 	Vnavbar &operator=(Vnavbar &) noexcept = default;
-	void start(Scene &scene) noexcept;
-	void onEvent(Scene &scene, const sf::Event &event) noexcept;
+	void start() noexcept;
+	void update() noexcept;
+	void onDestroy() noexcept;
+	void onEvent(const sf::Event &event) noexcept;
 	float getValue() const noexcept;
 	sf::FloatRect getGlobalBounds() const noexcept;
 	void setCursorTexture(const sf::Texture &texture) noexcept;

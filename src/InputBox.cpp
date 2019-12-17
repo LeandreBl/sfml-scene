@@ -2,10 +2,10 @@
 #include "Colors.hpp"
 
 namespace sfs {
-InputBox::InputBox(const sf::Font &font, const sf::Vector2f &position,
+InputBox::InputBox(Scene &scene, const sf::Font &font, const sf::Vector2f &position,
 		   const std::string &placeholder, const sf::Color &color,
 		   uint32_t characterSize) noexcept
-	: UI("InputBox", position)
+	: UI(scene, "InputBox", position)
 	, _color(color)
 	, _charSize(characterSize)
 	, _placeholder(placeholder)
@@ -19,17 +19,17 @@ InputBox::InputBox(const sf::Font &font, const sf::Vector2f &position,
 {
 }
 
-void InputBox::start(Scene &scene) noexcept
+void InputBox::start() noexcept
 {
-	_prevTime = scene.realTime();
-	scene.subscribe(*this, sf::Event::MouseButtonPressed);
-	scene.subscribe(*this, sf::Event::MouseButtonReleased);
-	scene.subscribe(*this, sf::Event::TextEntered);
+	_prevTime = scene().realTime();
+	subscribe(sf::Event::MouseButtonPressed);
+	subscribe(sf::Event::MouseButtonReleased);
+	subscribe(sf::Event::TextEntered);
 }
 
-void InputBox::update(Scene &scene) noexcept
+void InputBox::update() noexcept
 {
-	float t = scene.realTime();
+	float t = scene().realTime();
 
 	_text.setPosition(getPosition());
 	if (t - _prevTime >= 1.f) {
@@ -51,7 +51,7 @@ void InputBox::update(Scene &scene) noexcept
 	}
 }
 
-void InputBox::onEvent(Scene &, const sf::Event &event) noexcept
+void InputBox::onEvent(const sf::Event &event) noexcept
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (_text.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
@@ -82,7 +82,11 @@ void InputBox::onEvent(Scene &, const sf::Event &event) noexcept
 			}
 		}
 	}
-} // namespace sfs
+}
+
+void InputBox::onDestroy() noexcept
+{
+}
 
 std::string InputBox::string() const noexcept
 {
@@ -98,4 +102,42 @@ sf::FloatRect InputBox::getGlobalBounds() const noexcept
 {
 	return _text.getGlobalBounds();
 }
+
+void InputBox::toggle(bool _switch) noexcept
+{
+	_selected = _switch;
+}
+
+bool InputBox::getSelected() const noexcept
+{
+	return _selected;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+CustomBox::CustomBox(Scene &scene, const sf::Font &font, const sf::Vector2f &position,
+		     const std::string &placeholder, const sf::Color &color, uint32_t characterSize,
+		     const std::string &char_accepted) noexcept
+	: InputBox(scene, font, position, placeholder, color, characterSize)
+	, _chars(char_accepted)
+{
+}
+
+void CustomBox::onEvent(const sf::Event &event) noexcept
+{
+	InputBox::onEvent(event);
+	if (event.type == sf::Event::TextEntered && _selected) {
+		if (event.text.unicode != '\b') {
+			auto found = _chars.find(event.text.unicode);
+			if (found == std::string::npos) {
+				auto content = _content.toWideString();
+				if (content.size()) {
+					content.pop_back();
+					_content = content;
+				}
+			}
+		}
+	}
+}
+
 } // namespace sfs
