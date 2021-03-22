@@ -20,5 +20,8 @@ file(GLOB_RECURSE LIB_SOURCES "src/*.cpp")
 file(GLOB_RECURSE LIB_HEADERS "include/*.hpp")
 
 add_library(${LIB_NAME} SHARED ${LIB_SOURCES} ${LIB_HEADERS})
+add_library(${LIB_NAME}-static STATIC ${LIB_SOURCES} ${LIB_HEADERS})
 set_target_properties(${LIB_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${LIB_NAME}-static PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories(${LIB_NAME} PRIVATE "./include")
+target_include_directories(${LIB_NAME}-static PRIVATE "./include")
