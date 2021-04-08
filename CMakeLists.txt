@@ -4,11 +4,6 @@ project("SFML-scene" VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
 ## Sets the library name
 set(LIB_NAME "sfml-scene")
 
